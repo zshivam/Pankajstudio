@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <rect width="1200" height="800" fill="#ede8e2"/>
+  <rect x="560" y="340" width="80" height="80" rx="2" fill="none" stroke="#c8c0b7" stroke-width="1.5"/>
+  <circle cx="580" cy="365" r="7" fill="#c8c0b7"/>
+  <polygon points="560,420 600,380 640,420" fill="#c8c0b7" opacity="0.5"/>
+  <text x="600" y="490" font-family="Georgia,serif" font-size="14" font-style="italic" fill="#b8b0a8" text-anchor="middle">No image uploaded</text>
+  <text x="600" y="514" font-family="monospace" font-size="11" fill="#c8c0b7" text-anchor="middle" letter-spacing="3">PANKAJ STUDIO</text>
+</svg>
