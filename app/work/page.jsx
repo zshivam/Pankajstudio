@@ -1,79 +1,165 @@
-import { Suspense } from 'react';
+import Link from 'next/link';
 import connectDB from '@/lib/mongodb';
-import MediaProject from '@/models/MediaProject';
+import Gallery from '@/models/Gallery'; // 
 import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import MilestonesHub from '@/components/MilestonesHub';
 
-export const revalidate = 60;
-export const metadata = { title: 'Work', description: 'Browse our full portfolio — weddings, pre-wedding shoots, maternity sessions, and 4K cinema films.' };
 
-async function getProjects() {
-  try {
-    await connectDB();
-    return MediaProject.find({ isPublished: true, category: { $ne: 'cinema-4k' } })
-      .sort({ featured: -1, sortOrder: -1, eventDate: -1 })
-      .select('title slug category storyHighlight coverImage location eventDate is4K featured').lean();
-  } catch { return []; }
+export const dynamic = 'force-dynamic';
+export const metadata = { title: 'Our Work — Pankaj Studio' };
+
+async function getGalleryData() {
+  await connectDB();
+  
+  // 🌟 Naye database se data fetch kar rahe hain
+  const media = await Gallery.find().sort({ createdAt: -1 }).lean();
+  
+  const allImages = media.filter(m => m.type === 'image').map(m => m.url);
+  const allVideos = media.filter(m => m.type === 'video').map(m => ({
+    title: m.title || 'Cinematic Video',
+    url: m.url,
+    is4K: m.is4K
+  }));
+
+  return { allImages, allVideos };
 }
 
-async function getCinemaProjects() {
-  try {
-    await connectDB();
-    return MediaProject.findCinemaLounge(20);
-  } catch { return []; }
-}
+export default async function WorkPage({ searchParams }) {
+  const params = await searchParams;
+  const view = params.view || 'photos'; // Default tab 'photos' rahega
 
-export default async function WorkPage() {
-  const [projects, cinemaProjects] = await Promise.all([getProjects(), getCinemaProjects()]);
+  const { allImages, allVideos } = await getGalleryData();
+
+  // Helper: YouTube vs MP4 detect karne ke liye
+  const isEmbed = (url) => url.includes('youtube.com') || url.includes('youtu.be') || url.includes('vimeo.com');
+
+  const tabStyle = (isActive) => ({
+    padding: '12px 32px',
+    borderRadius: '30px',
+    fontFamily: '"DM Sans", sans-serif',
+    fontSize: 13,
+    fontWeight: isActive ? 600 : 400,
+    textTransform: 'uppercase',
+    letterSpacing: '0.1em',
+    color: isActive ? '#fff' : '#888',
+    background: isActive ? '#1a1a1a' : 'transparent',
+    border: isActive ? '1px solid rgba(255,255,255,0.2)' : '1px solid transparent',
+    transition: 'all 0.3s ease',
+    textDecoration: 'none'
+  });
 
   return (
-    <>
-      <Navbar />
-      <main style={{ paddingTop: 64 }}>
-        {/* Header */}
-        <div style={{ background: '#f8f7f5', padding: '72px var(--page-gutter) 0', borderBottom: '1px solid #e4dfd9' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
-            <span style={{ display: 'block', width: 28, height: 1, background: '#c8c0b7' }} />
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.22em', color: '#9a9087', textTransform: 'uppercase' }}>Archive</span>
-          </div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(38px, 5vw, 64px)', fontWeight: 300, fontStyle: 'italic', color: '#1a1714', lineHeight: 1.05, letterSpacing: '-0.02em', paddingBottom: 48 }}>
-            All Work
+    <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', paddingTop: 100, paddingBottom: 80 }}>
+      
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 24px' }}>
+        
+        <Navbar />
+        
+        {/* 🟢 Header & Tabs */}
+        <div style={{ textAlign: 'center', marginBottom: 60 }}>
+          <h1 style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: 'clamp(40px, 6vw, 64px)', fontStyle: 'italic', fontWeight: 300, marginBottom: 24 }}>
+            Our Gallery
           </h1>
+          
+          <div style={{ display: 'inline-flex', background: '#111', padding: 6, borderRadius: '40px', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <Link href="?view=photos" style={tabStyle(view === 'photos')}>
+              Image Gallery
+            </Link>
+            <Link href="?view=videos" style={tabStyle(view === 'videos')}>
+              4K Videos
+            </Link>
+          </div>
         </div>
 
-        {/* Portfolio grid */}
-        <Suspense fallback={<div style={{ height: 400 }} />}>
-          <MilestonesHub projects={projects} />
-        </Suspense>
-
-        {/* Cinema section */}
-        {cinemaProjects.length > 0 && (
-          <section style={{ background: '#060606', padding: 'var(--section-gap) var(--page-gutter)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 32 }}>
-              <span style={{ display: 'block', width: 28, height: 1, background: 'rgba(255,255,255,0.18)' }} />
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.22em', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase' }}>Cinema Lounge</span>
-            </div>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 4vw, 52px)', fontWeight: 300, color: '#fff', lineHeight: 1.1, letterSpacing: '-0.02em', marginBottom: 48 }}>4K Films</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(320px,1fr))', gap: 20 }}>
-              {cinemaProjects.map((p) => (
-                <a key={p._id || p.slug} href={`/work/${p.slug}`} style={{ textDecoration: 'none' }}>
-                  <div style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden', borderRadius: 2 }}>
-                    {p.coverImage?.url && <img src={p.coverImage.url} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'saturate(0.75)' }} loading="lazy" />}
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%)', zIndex: 1 }} />
-                    {p.is4K && <span style={{ position: 'absolute', top: 12, left: 12, zIndex: 2, padding: '2px 7px', fontFamily: 'var(--font-sans)', fontSize: 8, fontWeight: 700, letterSpacing: '0.12em', color: '#0a0a0a', textTransform: 'uppercase', background: 'linear-gradient(135deg,#e8d5a3,#c9a84c,#f5e099,#b8902a)', borderRadius: 1 }}>4K ULTRA HD</span>}
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 2, padding: '0 16px 16px' }}>
-                      <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 500, fontStyle: 'italic', color: '#fff', lineHeight: 1.2 }}>{p.title}</h3>
-                      {p.location?.city && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 5 }}>{p.location.city}</p>}
-                    </div>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </section>
+        {/* 🟢 TAB 1: STYLISH IMAGE DUMP (Masonry Layout) */}
+        {view === 'photos' && (
+          <div style={{ 
+            columnCount: 3, 
+            columnGap: '16px',
+            width: '100%'
+          }} className="masonry-grid">
+            {allImages.length > 0 ? allImages.map((src, index) => (
+              <div key={index} style={{ marginBottom: '16px', breakInside: 'avoid', overflow: 'hidden', borderRadius: '8px' }}>
+                {/* 🌟 CSS Class use ki hai error hatane ke liye */}
+                <img 
+                  src={src} 
+                  alt={`Gallery Image ${index}`} 
+                  loading="lazy"
+                  className="gallery-hover-effect"
+                  style={{ 
+                    width: '100%', 
+                    display: 'block', 
+                    objectFit: 'cover'
+                  }}
+                />
+              </div>
+            )) : (
+              <p style={{ textAlign: 'center', color: '#666', gridColumn: '1 / -1', marginTop: 40 }}>No images uploaded yet.</p>
+            )}
+          </div>
         )}
-      </main>
-      <Footer />
-    </>
+
+        {/* 🟢 TAB 2: 4K VIDEO GRID */}
+        {view === 'videos' && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: 32 }}>
+            {allVideos.length > 0 ? allVideos.map((video, index) => (
+              <div key={index} style={{ background: '#111', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)' }}>
+                {/* 16:9 Aspect Ratio Container */}
+                <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, background: '#000' }}>
+                  {isEmbed(video.url) ? (
+                    <iframe 
+                      src={video.url} 
+                      title={video.title}
+                      frameBorder="0" 
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                      allowFullScreen
+                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                    />
+                  ) : (
+                    <video 
+                      src={video.url} 
+                      controls 
+                      preload="metadata" 
+                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} 
+                    />
+                  )}
+                </div>
+                <div style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 16, fontWeight: 400 }}>{video.title}</h3>
+                  {video.is4K && (
+                    <span style={{ fontFamily: '"DM Mono", monospace', fontSize: 10, padding: '4px 8px', background: 'rgba(201,168,76,0.1)', color: '#c9a84c', borderRadius: 4, letterSpacing: '0.1em' }}>
+                      4K ULTRA
+                    </span>
+                  )}
+                </div>
+              </div>
+            )) : (
+              <p style={{ textAlign: 'center', color: '#666', gridColumn: '1 / -1', marginTop: 40 }}>No videos uploaded yet.</p>
+            )}
+          </div>
+        )}
+
+      </div>
+
+      {/* 🌟 Stylesheet for Grid and Hover Effect */}
+      <style>{`
+        /* Hover Effect using Pure CSS */
+        .gallery-hover-effect {
+          transition: transform 0.5s ease;
+          cursor: pointer;
+        }
+        .gallery-hover-effect:hover {
+          transform: scale(1.03);
+        }
+
+        /* Responsive Masonry Grid */
+        @media (max-width: 1024px) { 
+          .masonry-grid { column-count: 2 !important; } 
+        }
+        @media (max-width: 640px) { 
+          .masonry-grid { column-count: 1 !important; } 
+        }
+      `}</style>
+
+    </div>
   );
 }

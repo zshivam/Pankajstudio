@@ -23,7 +23,18 @@ const MediaProjectSchema = new Schema(
     },
     category: {
       type: String, required: true,
-      enum: ['wedding', 'pre-wedding', 'maternity', 'baby', 'birthday', 'corporate', 'cinema-4k'],
+      // 🌟 Yahan nayi categories update kar di hain
+      enum: [
+        'candid-photography', 
+        'cinematography', 
+        'wedding', 
+        'ring-ceremony', 
+        'pre-wedding', 
+        'birthday', 
+        'maternity', 
+        'corporate-events', 
+        'drone-led-wall'
+      ],
       index: true,
     },
     description: { type: String, trim: true, maxlength: 2000, default: '' },
@@ -34,29 +45,26 @@ const MediaProjectSchema = new Schema(
       country: { type: String, trim: true, default: 'India' },
     },
     eventDate: { type: Date, default: null, index: true },
-
-    // Cover image — stored locally in /public/uploads/
+    
+    // 🌟 ALBUM KA COVER PHOTO 🌟
     coverImage: {
       type: ImageSchema,
       required: [true, 'Cover image is required.'],
     },
-
-    // Gallery images — stored locally
+    
+    // 🌟 ALBUM KI ANDAR KI PHOTOS (Max 100 kar diya hai) 🌟
     galleryImages: {
       type: [ImageSchema],
       default: [],
-      validate: { validator: (a) => a.length <= 60, message: 'Max 60 gallery images.' },
+      validate: { validator: (a) => a.length <= 100, message: 'Max 100 album images allowed.' },
     },
-
-    // Video — YouTube / Vimeo embed URL (no local video storage)
+    
     videoEmbedUrl: { type: String, trim: true, default: '' },
     videoThumbnailUrl: { type: String, trim: true, default: '' },
     videoDuration: { type: String, trim: true, default: '' },
-
     is4K: { type: Boolean, default: false, index: true },
     featured: { type: Boolean, default: false, index: true },
     isPublished: { type: Boolean, default: false, index: true },
-
     metaTitle: { type: String, trim: true, maxlength: 70, default: '' },
     metaDescription: { type: String, trim: true, maxlength: 160, default: '' },
     sortOrder: { type: Number, default: 0 },
@@ -68,6 +76,7 @@ const MediaProjectSchema = new Schema(
 MediaProjectSchema.index({ category: 1, featured: -1, eventDate: -1 });
 MediaProjectSchema.index({ isPublished: 1, sortOrder: -1, createdAt: -1 });
 
+// Statics
 MediaProjectSchema.statics.findByCategory = function (category, { limit = 12, skip = 0 } = {}) {
   const q = { isPublished: true };
   if (category && category !== 'all') q.category = category;
@@ -76,7 +85,8 @@ MediaProjectSchema.statics.findByCategory = function (category, { limit = 12, sk
 };
 
 MediaProjectSchema.statics.findCinemaLounge = function (limit = 10) {
-  return this.find({ category: 'cinema-4k', isPublished: true, videoEmbedUrl: { $ne: '' } })
+  // 🌟 Yahan 'cinema-4k' ki jagah 'cinematography' kar diya hai
+  return this.find({ category: 'cinematography', isPublished: true, videoEmbedUrl: { $ne: '' } })
     .sort({ featured: -1, sortOrder: -1 }).limit(limit)
     .select('title slug storyHighlight coverImage videoEmbedUrl videoThumbnailUrl videoDuration is4K location eventDate').lean();
 };

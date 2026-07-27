@@ -6,14 +6,17 @@ import ImageUploader from './ImageUploader';
 import GalleryUploader from './GalleryUploader';
 import { slugify } from '@/lib/utils';
 
+// 🌟 Yahan aapki nayi categories update kar di hain!
 const CATEGORIES = [
+  { value: 'candid-photography', label: 'Candid Photography' },
+  { value: 'cinematography', label: 'Cinematography' },
   { value: 'wedding', label: 'Wedding' },
+  { value: 'ring-ceremony', label: 'Ring Ceremony' },
   { value: 'pre-wedding', label: 'Pre-Wedding' },
-  { value: 'maternity', label: 'Maternity' },
-  { value: 'baby', label: 'Baby Shoot' },
   { value: 'birthday', label: 'Birthday' },
-  { value: 'corporate', label: 'Corporate' },
-  { value: 'cinema-4k', label: 'Cinema 4K' },
+  { value: 'maternity', label: 'Maternity' },
+  { value: 'corporate-events', label: 'Corporate All Events' },
+  { value: 'drone-led-wall', label: 'Drone LED Wall' },
 ];
 
 export default function ProjectForm({ project = null }) {
@@ -123,9 +126,17 @@ export default function ProjectForm({ project = null }) {
               </FormField>
             </FormRow>
             <FormRow>
-              <FormField label="Category *">
+             <FormField label="Category *">
                 <select value={form.category} onChange={(e) => set('category', e.target.value)} style={inputStyle}>
-                  {CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+                  {CATEGORIES.map((c) => (
+                    <option 
+                      key={c.value} 
+                      value={c.value} 
+                      style={{ background: '#1a1a1a', color: '#ffffff' }}
+                    >
+                      {c.label}
+                    </option>
+                  ))}
                 </select>
               </FormField>
               <FormField label="Event Date">

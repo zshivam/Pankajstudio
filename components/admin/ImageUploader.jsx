@@ -27,7 +27,7 @@ export default function ImageUploader({ onUpload, category = 'general', type = '
       setError('Only JPEG, PNG, and WebP files allowed.');
       return;
     }
-    if (file.size > 15 * 1024 * 1024) {
+    if (file.size > 50 * 1024 * 1024) {
       setError('File too large. Max 15MB.');
       return;
     }

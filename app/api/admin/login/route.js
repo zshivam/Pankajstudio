@@ -1,15 +1,27 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { SignJWT } from 'jose'; // 🌟 Next.js 15 standard edge-safe JWT library
+import { SignJWT } from 'jose';
 
 export async function POST(request) {
   try {
     const body = await request.json().catch(() => ({}));
     const { username, password } = body;
 
-    const expectedUser = process.env.ADMIN_USERNAME || 'pankaj';
-    const expectedPass = process.env.ADMIN_PASSWORD || 'pankaj';
+    // 🌟 Secure approach: Strictly read from env, NO hardcoded fallbacks
+    const expectedUser = process.env.ADMIN_USERNAME;
+    const expectedPass = process.env.ADMIN_PASSWORD;
+    const secretText = process.env.JWT_SECRET;
 
+    // Safety check: If env variables are missing, stop immediately
+    if (!expectedUser || !expectedPass || !secretText) {
+      console.error('CRITICAL ERROR: Missing Environment Variables');
+      return NextResponse.json(
+        { success: false, error: 'Server configuration error' },
+        { status: 500 }
+      );
+    }
+
+    // Verify credentials
     if (username !== expectedUser || password !== expectedPass) {
       return NextResponse.json(
         { success: false, error: 'Username ya Password galat hai!' },
@@ -17,11 +29,9 @@ export async function POST(request) {
       );
     }
 
-    // 🌟 1. .env.local se JWT_SECRET read karke encode karna
-    const secretText = process.env.JWT_SECRET || '4a2f8b9c1d0e7f3a6b5c9d2e8f1a0b3c4d7e6f9a2b5c8d1e0f3a6b9c2d5e8f1a';
+    // 🌟 Encode the secret and create JWT
     const secret = new TextEncoder().encode(secretText);
 
-    // 🌟 2. Ek asli cryptographically signed JWT Token taiyar karna
     const token = await new SignJWT({ username, role: 'admin' })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
@@ -30,7 +40,7 @@ export async function POST(request) {
 
     const cookieStore = await cookies();
     
-    // 🌟 3. Asli token ko cookie me set karna
+    // 🌟 Set the secure cookie
     cookieStore.set('admin_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

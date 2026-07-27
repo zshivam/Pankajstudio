@@ -20,7 +20,7 @@
     "nodemailer": "^8.0.10",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "react-hook-form": "^7.78.0",
+    "react-hook-form": "^7.80.0",
     "sharp": "^0.33.5",
     "slugify": "^1.6.9"
   },

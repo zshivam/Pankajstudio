@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAdminSession } from '@/lib/auth';
+import MediaProject from '@/models/MediaProject';
 import { saveUploadedImage, generateBlurPlaceholder } from '@/lib/upload';
 
 export const dynamic = 'force-dynamic';

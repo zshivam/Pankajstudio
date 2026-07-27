@@ -6,6 +6,17 @@ import { deleteUploadedImage } from '@/lib/upload';
 
 export const dynamic = 'force-dynamic';
 
+// 🌟 HELPER: Slug ko hamesha 'lowercase-hyphen-separated' format me convert karne ke liye
+const generateValidSlug = (text) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')       // Spaces ko hyphens se replace karta hai
+    .replace(/[^\w-]+/g, '')    // Special characters ko remove karta hai
+    .replace(/--+/g, '-');      // Ek se zyada hyphens ko single hyphen banata hai
+};
+
 export async function GET(request, { params }) {
   const { id } = await params;
   try {
@@ -31,10 +42,17 @@ export async function PATCH(request, { params }) {
     await connectDB();
     const body = await request.json();
 
+    // 🌟 THE FIX: Agar admin space wala slug bhejta hai, toh use sahi format me auto-correct karo
+    if (body.slug) {
+      body.slug = generateValidSlug(body.slug);
+    } else if (body.title) {
+      body.slug = generateValidSlug(body.title); // Agar title change ho raha hai toh naya slug banao
+    }
+
     const project = await MediaProject.findByIdAndUpdate(
       id,
       { $set: body },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true } // 🌟 FIXED: 'new: true' warning removed
     ).lean();
 
     if (!project) return NextResponse.json({ success: false, error: 'Project not found.' }, { status: 404 });

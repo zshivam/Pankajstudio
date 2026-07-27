@@ -11,18 +11,19 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://pankajstudio.online
 export const metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: `${siteName} — Premium Photography & Cinema`, template: `%s | ${siteName}` },
-  description: "Premium photography and 4K cinema for weddings, pre-weddings, maternity, and life's most significant milestones. Based in Lucknow. Available across India.",
-  keywords: ['wedding photography', 'maternity photography', 'pre-wedding shoot', '4K wedding film', 'Lucknow photographer'],
+  description: "Premium photography and 4K cinema for weddings, pre-weddings, maternity, and life's most significant milestones. Based in Deoria. Available across India.",
+  keywords: ['wedding photography', 'maternity photography', 'pre-wedding shoot', '4K wedding film', 'Deoria photographer'],
   openGraph: { type: 'website', siteName, locale: 'en_IN' },
   twitter: { card: 'summary_large_image' },
   robots: { index: true, follow: true },
+  
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="suppressHydrationWarning" className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable}`}>
       <head>
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/pstudiologo.svg" type="image/svg+xml" />
       </head>
       <body className="antialiased">{children}</body>
     </html>
