@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
-import { writeFile, mkdir, unlink } from 'fs/promises'; // 🌟 unlink import kiya
-import path from 'path';
+import { v2 as cloudinary } from 'cloudinary';
 import connectDB from '@/lib/mongodb';
 import CarouselImage from '@/models/CarouselImage';
+
+// Cloudinary connection setup
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // GET: Frontend ko saari hero images bhejne ke liye
 export async function GET() {
@@ -15,36 +21,46 @@ export async function GET() {
   }
 }
 
-// POST: Admin panel se aayi nayi photo save karne ke liye
+// POST: Admin panel se aayi nayi photo Cloudinary + DB me save karne ke liye
 export async function POST(request) {
   try {
     await connectDB();
     const data = await request.formData();
-    const file = data.get('image');
+    
+    // Frontend se image nikalna (Pichle code mein aapne 'image' naam diya tha)
+    const file = data.get('image') || data.get('file');
 
     if (!file) return NextResponse.json({ success: false, error: 'No file found' }, { status: 400 });
 
     const byteData = await file.arrayBuffer();
     const buffer = Buffer.from(byteData);
-    
-    const filename = `hero-${Date.now()}-${file.name.replaceAll(' ', '_')}`;
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'hero');
-    
-    try { await mkdir(uploadDir, { recursive: true }); } catch (e) {}
 
-    const filePath = path.join(uploadDir, filename);
-    await writeFile(filePath, buffer);
+    // Direct Cloudinary par upload karna (bina local save kiye)
+    const uploadResult = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder: 'pankaj_studio_hero' }, 
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      uploadStream.end(buffer);
+    });
 
-    const imageUrl = `/uploads/hero/${filename}`;
-    const newImage = await CarouselImage.create({ imageUrl, isActive: true });
+    // Cloudinary ka live link MongoDB me save karna (Aapke model me 'imageUrl' hai)
+    const newImage = await CarouselImage.create({ 
+      imageUrl: uploadResult.secure_url, 
+      isActive: true 
+    });
 
     return NextResponse.json({ success: true, image: newImage });
   } catch (error) {
+    console.error('Upload Error:', error);
     return NextResponse.json({ success: false, error: 'Upload failed' }, { status: 500 });
   }
 }
 
-// 🌟Photo delete karne ke liye
+// DELETE: Photo delete karne ke liye
 export async function DELETE(request) {
   try {
     await connectDB();
@@ -57,15 +73,13 @@ export async function DELETE(request) {
     // 1. Database se image delete karo
     await CarouselImage.findByIdAndDelete(id);
 
-    // 2. Folder (public/uploads/hero) se original file delete karo
-    if (imageUrl) {
-      const filename = imageUrl.split('/').pop(); // URL se file ka naam nikala
-      const filePath = path.join(process.cwd(), 'public', 'uploads', 'hero', filename);
-      try {
-        await unlink(filePath); 
-      } catch (err) {
-        console.log("File folder me nahi mili, par DB se delete ho gayi.");
-      }
+    // 2. Cloudinary se original file delete karo (Optional but good for storage)
+    if (imageUrl && imageUrl.includes('cloudinary')) {
+      const urlParts = imageUrl.split('/');
+      const filename = urlParts[urlParts.length - 1];
+      const publicId = 'pankaj_studio_hero/' + filename.split('.')[0];
+      
+      await cloudinary.uploader.destroy(publicId);
     }
 
     return NextResponse.json({ success: true, message: 'Deleted successfully' });
