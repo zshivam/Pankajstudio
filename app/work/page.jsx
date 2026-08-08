@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import connectDB from '@/lib/mongodb';
-import Gallery from '@/models/Gallery'; // 
+import Gallery from '@/models/Gallery';
 import Navbar from '@/components/Navbar';
-
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Our Work — Pankaj Studio' };
@@ -10,27 +9,35 @@ export const metadata = { title: 'Our Work — Pankaj Studio' };
 async function getGalleryData() {
   await connectDB();
   
-  // 🌟 Naye database se data fetch kar rahe hain
   const media = await Gallery.find().sort({ createdAt: -1 }).lean();
   
-  const allImages = media.filter(m => m.type === 'image').map(m => m.url);
-  const allVideos = media.filter(m => m.type === 'video').map(m => ({
-    title: m.title || 'Cinematic Video',
-    url: m.url,
-    is4K: m.is4K
-  }));
+  // 🌟 Safe mapping: url aur imageUrl dono ko handle kar raha hai
+  const allImages = media
+    .filter(m => m.type === 'image' && (m.url || m.imageUrl))
+    .map(m => m.url || m.imageUrl);
+
+  const allVideos = media
+    .filter(m => m.type === 'video' && (m.url || m.videoUrl))
+    .map(m => ({
+      title: m.title || 'Cinematic Video',
+      url: m.url || m.videoUrl || '',
+      is4K: Boolean(m.is4K)
+    }));
 
   return { allImages, allVideos };
 }
 
 export default async function WorkPage({ searchParams }) {
   const params = await searchParams;
-  const view = params.view || 'photos'; // Default tab 'photos' rahega
+  const view = params?.view || 'photos';
 
   const { allImages, allVideos } = await getGalleryData();
 
-  // Helper: YouTube vs MP4 detect karne ke liye
-  const isEmbed = (url) => url.includes('youtube.com') || url.includes('youtu.be') || url.includes('vimeo.com');
+  // 🌟 FIX 1: Safe Embed check (Prevents undefined.includes crash)
+  const isEmbed = (url) => {
+    if (!url || typeof url !== 'string') return false;
+    return url.includes('youtube.com') || url.includes('youtu.be') || url.includes('vimeo.com');
+  };
 
   const tabStyle = (isActive) => ({
     padding: '12px 32px',
@@ -54,7 +61,7 @@ export default async function WorkPage({ searchParams }) {
         
         <Navbar />
         
-        {/* 🟢 Header & Tabs */}
+        {/* Header & Tabs */}
         <div style={{ textAlign: 'center', marginBottom: 60 }}>
           <h1 style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: 'clamp(40px, 6vw, 64px)', fontStyle: 'italic', fontWeight: 300, marginBottom: 24 }}>
             Our Gallery
@@ -70,26 +77,17 @@ export default async function WorkPage({ searchParams }) {
           </div>
         </div>
 
-        {/* 🟢 TAB 1: STYLISH IMAGE DUMP (Masonry Layout) */}
+        {/* TAB 1: IMAGE MASONRY GRID */}
         {view === 'photos' && (
-          <div style={{ 
-            columnCount: 3, 
-            columnGap: '16px',
-            width: '100%'
-          }} className="masonry-grid">
+          <div style={{ columnCount: 3, columnGap: '16px', width: '100%' }} className="masonry-grid">
             {allImages.length > 0 ? allImages.map((src, index) => (
               <div key={index} style={{ marginBottom: '16px', breakInside: 'avoid', overflow: 'hidden', borderRadius: '8px' }}>
-                {/* 🌟 CSS Class use ki hai error hatane ke liye */}
                 <img 
                   src={src} 
                   alt={`Gallery Image ${index}`} 
                   loading="lazy"
                   className="gallery-hover-effect"
-                  style={{ 
-                    width: '100%', 
-                    display: 'block', 
-                    objectFit: 'cover'
-                  }}
+                  style={{ width: '100%', display: 'block', objectFit: 'cover' }}
                 />
               </div>
             )) : (
@@ -98,12 +96,11 @@ export default async function WorkPage({ searchParams }) {
           </div>
         )}
 
-        {/* 🟢 TAB 2: 4K VIDEO GRID */}
+        {/* TAB 2: 4K VIDEO GRID */}
         {view === 'videos' && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: 32 }}>
             {allVideos.length > 0 ? allVideos.map((video, index) => (
               <div key={index} style={{ background: '#111', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)' }}>
-                {/* 16:9 Aspect Ratio Container */}
                 <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, background: '#000' }}>
                   {isEmbed(video.url) ? (
                     <iframe 
@@ -140,9 +137,7 @@ export default async function WorkPage({ searchParams }) {
 
       </div>
 
-      {/* 🌟 Stylesheet for Grid and Hover Effect */}
       <style>{`
-        /* Hover Effect using Pure CSS */
         .gallery-hover-effect {
           transition: transform 0.5s ease;
           cursor: pointer;
@@ -150,14 +145,8 @@ export default async function WorkPage({ searchParams }) {
         .gallery-hover-effect:hover {
           transform: scale(1.03);
         }
-
-        /* Responsive Masonry Grid */
-        @media (max-width: 1024px) { 
-          .masonry-grid { column-count: 2 !important; } 
-        }
-        @media (max-width: 640px) { 
-          .masonry-grid { column-count: 1 !important; } 
-        }
+        @media (max-width: 1024px) { .masonry-grid { column-count: 2 !important; } }
+        @media (max-width: 640px) { .masonry-grid { column-count: 1 !important; } }
       `}</style>
 
     </div>

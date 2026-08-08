@@ -19,27 +19,45 @@ async function getData() {
   try {
     await connectDB();
     
-    // DB se data fetch kiya
     const [rawHeroProject, rawCinemaProjects, rawPortfolioProjects, rawCarouselImages] = await Promise.all([
-      MediaProject.findOne({ isPublished: true, featured: true }).sort({ eventDate: -1 }).select('title slug storyHighlight coverImage location eventDate').lean(),
+      MediaProject.findOne({ isPublished: true, featured: true }).sort({ eventDate: -1 }).lean(),
       CinemaVideo.find({}).sort({ sortOrder: -1 }).lean(),
-      MediaProject.find({ isPublished: true, category: { $ne: 'cinema-4k' } }).sort({ featured: -1, sortOrder: -1, eventDate: -1 }).limit(12).select('title slug category storyHighlight coverImage location eventDate is4K featured').lean(),
+      MediaProject.find({ isPublished: true, category: { $ne: 'cinema-4k' } }).sort({ featured: -1, sortOrder: -1, eventDate: -1 }).limit(12).lean(),
       CarouselImage.find({ isActive: true }).sort({ createdAt: -1 }).lean(),
     ]);
 
-    // 🌟 TERMINAL DEBUGGING LOGS 🌟
-    console.log("---- MONGODB FETCH RESULT ----");
-    console.log("Hero Project Found:", rawHeroProject ? "YES" : "NO (Need a featured project!)");
-    console.log("Carousel Images Count:", rawCarouselImages.length);
-    console.log("------------------------------");
-    
-    // 🌟 MASTER TRICK: Raw objects ko strings/plain objects mein badalna
-    return JSON.parse(JSON.stringify({ 
-      heroProject: rawHeroProject || null,
-      cinemaProjects: rawCinemaProjects || [], 
-      portfolioProjects: rawPortfolioProjects || [], 
-      carouselImages: rawCarouselImages || [] 
+    // 🌟 FIX 3: Safe Data Normalization (HAR component ko safe properties deta hai)
+    const normalizedCarousel = (rawCarouselImages || []).map(img => ({
+      ...img,
+      _id: img._id?.toString(),
+      url: img.url || img.imageUrl || (typeof img.image === 'string' ? img.image : img.image?.url) || '/placeholder.svg'
     }));
+
+    const normalizedPortfolio = (rawPortfolioProjects || []).map(p => ({
+      ...p,
+      _id: p._id?.toString(),
+      coverImage: p.coverImage || p.imageUrl || p.url || '/placeholder.svg',
+      url: p.imageUrl || p.coverImage || p.url || '/placeholder.svg'
+    }));
+
+    const normalizedCinema = (rawCinemaProjects || []).map(c => ({
+      ...c,
+      _id: c._id?.toString(),
+      url: c.url || c.videoUrl || ''
+    }));
+
+    const normalizedHero = rawHeroProject ? {
+      ...rawHeroProject,
+      _id: rawHeroProject._id?.toString(),
+      coverImage: rawHeroProject.coverImage || rawHeroProject.imageUrl || '/placeholder.svg'
+    } : null;
+
+    return { 
+      heroProject: normalizedHero,
+      cinemaProjects: normalizedCinema, 
+      portfolioProjects: normalizedPortfolio, 
+      carouselImages: normalizedCarousel 
+    };
 
   } catch (err) {
     console.error('Homepage data error:', err);
@@ -57,23 +75,22 @@ export default async function HomePage() {
         {/* 1. Welcome Banners */}
         <WelcomeHero images={carouselImages} />
       
-        {/* 5. Cinemalounge (Agar heroProject null hoga, toh handle ho jayega) */}
+        {/* 2. Cinemalounge */}
         <HeroAndCinema heroProject={heroProject} cinemaProjects={cinemaProjects} />
-
           
-        {/* 2. Portfolio / Milestones */}
+        {/* 3. Portfolio / Milestones */}
         <MilestonesHub projects={portfolioProjects} />
 
-          {/* 7. About Strip */}
+        {/* 4. About Strip */}
         <AboutStrip />
 
-        {/* 6. NAYA: Client Love (Testimonials) */}
+        {/* 5. Client Love */}
         <ClientLove />
 
-           {/* 4. NAYA: By The Numbers Section */}
+        {/* 6. By The Numbers */}
         <ByTheNumbers />
 
-            {/* 3. NAYA: Featured Trust Bar */}
+        {/* 7. Featured Trust Bar */}
         <FeaturedBar />
 
         {/* 8. FAQs */}
