@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 /**
  * ImageUploader
@@ -13,11 +13,17 @@ import { useState, useRef, useCallback } from 'react';
  */
 export default function ImageUploader({ onUpload, category = 'general', type = 'cover', label = 'Upload Image', currentImage = null }) {
   const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState(currentImage?.url || null);
+  const [preview, setPreview] = useState(typeof currentImage === 'string' ? currentImage : currentImage?.url || null);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef(null);
+
+  // Sync preview when currentImage prop changes externally
+  useEffect(() => {
+    const activeUrl = typeof currentImage === 'string' ? currentImage : currentImage?.url;
+    setPreview(activeUrl || null);
+  }, [currentImage]);
 
   const handleFile = useCallback(async (file) => {
     if (!file) return;
@@ -52,24 +58,42 @@ export default function ImageUploader({ onUpload, category = 'general', type = '
       setProgress(80);
       const data = await res.json();
 
-      if (!data.success) {
+      if (!res.ok || !data.success) {
         setError(data.error || 'Upload failed.');
-        setPreview(currentImage?.url || null);
+        setPreview(typeof currentImage === 'string' ? currentImage : currentImage?.url || null);
         setUploading(false);
         setProgress(0);
         return;
       }
 
-      setPreview(data.image.url);
+      // 🌟 SAFE RESPONSE NORMALIZATION: Handles { image: { url } }, { url: "..." }, or direct string
+      let normalizedImageObj = null;
+
+      if (typeof data.image === 'object' && data.image !== null && data.image.url) {
+        normalizedImageObj = data.image;
+      } else if (data.url) {
+        normalizedImageObj = { url: data.url, altText: file.name || 'Cover Photo' };
+      } else if (typeof data.image === 'string') {
+        normalizedImageObj = { url: data.image, altText: file.name || 'Cover Photo' };
+      }
+
+      if (!normalizedImageObj?.url) {
+        throw new Error('Server returned invalid image URL format.');
+      }
+
+      setPreview(normalizedImageObj.url);
       setProgress(100);
-      onUpload(data.image);
+      onUpload(normalizedImageObj);
       URL.revokeObjectURL(localUrl);
-    } catch {
-      setError('Upload failed. Please try again.');
-      setPreview(currentImage?.url || null);
+
+    } catch (err) {
+      console.error('Image upload error:', err);
+      setError(err.message || 'Upload failed. Please try again.');
+      setPreview(typeof currentImage === 'string' ? currentImage : currentImage?.url || null);
     } finally {
       setUploading(false);
       setTimeout(() => setProgress(0), 800);
+      if (inputRef.current) inputRef.current.value = '';
     }
   }, [category, type, onUpload, currentImage]);
 
@@ -87,7 +111,7 @@ export default function ImageUploader({ onUpload, category = 'general', type = '
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <label style={labelStyle}>{label}</label>
+      {label && <label style={labelStyle}>{label}</label>}
 
       {/* Drop zone */}
       <div
@@ -106,6 +130,7 @@ export default function ImageUploader({ onUpload, category = 'general', type = '
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          borderRadius: 6
         }}
       >
         {/* Preview */}
@@ -122,7 +147,7 @@ export default function ImageUploader({ onUpload, category = 'general', type = '
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 opacity: 0, transition: 'all 0.2s',
               }} className="img-overlay">
-                <span style={{ fontSize: 11, color: '#fff', fontFamily: '"DM Mono", monospace', letterSpacing: '0.12em', textTransform: 'uppercase', background: 'rgba(0,0,0,0.7)', padding: '8px 16px' }}>
+                <span style={{ fontSize: 11, color: '#fff', fontFamily: '"DM Mono", monospace', letterSpacing: '0.12em', textTransform: 'uppercase', background: 'rgba(0,0,0,0.7)', padding: '8px 16px', borderRadius: 4 }}>
                   Click to replace
                 </span>
               </div>
@@ -158,7 +183,7 @@ export default function ImageUploader({ onUpload, category = 'general', type = '
       </div>
 
       {error && (
-        <p style={{ fontFamily: '"DM Mono", monospace', fontSize: 10, color: '#ff6b6b', letterSpacing: '0.05em' }}>
+        <p style={{ fontFamily: '"DM Mono", monospace', fontSize: 10, color: '#ff6b6b', letterSpacing: '0.05em', margin: '4px 0 0 0' }}>
           {error}
         </p>
       )}
