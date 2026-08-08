@@ -5,7 +5,7 @@ import MediaProject from '@/models/MediaProject';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
-export const revalidate = 60; // Har 1 min me revalidate hoga
+export const revalidate = 60;
 
 export const metadata = {
   title: 'Our Portfolio & Albums — Pankaj Studio',
@@ -15,7 +15,7 @@ export const metadata = {
 export default async function WorkPage() {
   await connectDB();
 
-  // Sirf vahi projects fetch honge jo 'isPublished: true' hain
+  // Fetch published projects
   const projects = await MediaProject.find({ isPublished: true })
     .sort({ sortOrder: -1, createdAt: -1 })
     .select('title slug category coverImage galleryImages storyHighlight location is4K eventDate')
@@ -47,7 +47,6 @@ export default async function WorkPage() {
               const photoCount = p.galleryImages?.length || 0;
 
               return (
-                /* 🌟 HAR CARD PAR CLICK KARNE PAR ALBUM REDIRECT HONGA */
                 <Link
                   key={p._id.toString()}
                   href={`/work/${p.slug}`}
@@ -141,7 +140,8 @@ export default async function WorkPage() {
         </div>
       </main>
 
-      <style jsx global>{`
+      {/* 🌟 Standard HTML Style Tag (Fixes Server Component Build Crash) */}
+      <style>{`
         .portfolio-card:hover {
           transform: translateY(-6px);
           border-color: rgba(201, 168, 76, 0.4) !important;
