@@ -4,7 +4,8 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import GalleryLightbox from '@/components/GalleryLightbox';
 
-export const revalidate = 60;
+// 🌟 FIX FOR PRERENDER BUILD ERROR
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Photo Gallery — Pankaj Studio',
@@ -14,13 +15,12 @@ export const metadata = {
 export default async function GalleryPage() {
   await connectDB();
 
-  // Fetch all published projects
+  // Fetch published projects
   const projects = await MediaProject.find({ isPublished: true })
     .select('title galleryImages coverImage')
     .sort({ createdAt: -1 })
     .lean();
 
-  // Clean JSON serialization to avoid prerender object errors
   const plainProjects = JSON.parse(JSON.stringify(projects));
   const allImages = [];
 
