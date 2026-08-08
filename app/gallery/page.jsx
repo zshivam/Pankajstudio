@@ -14,17 +14,18 @@ export const metadata = {
 export default async function GalleryPage() {
   await connectDB();
 
-  // Fetch all published projects to collect gallery images
+  // Fetch all published projects
   const projects = await MediaProject.find({ isPublished: true })
     .select('title galleryImages coverImage')
     .sort({ createdAt: -1 })
     .lean();
 
-  // Combine cover images and gallery images into a single feed
+  // Clean JSON serialization to avoid prerender object errors
+  const plainProjects = JSON.parse(JSON.stringify(projects));
   const allImages = [];
 
-  projects.forEach((p) => {
-    // Add Cover Photo
+  plainProjects.forEach((p) => {
+    // Add Cover Image
     if (p.coverImage?.url || typeof p.coverImage === 'string') {
       const coverUrl = typeof p.coverImage === 'string' ? p.coverImage : p.coverImage.url;
       allImages.push({
@@ -33,7 +34,7 @@ export default async function GalleryPage() {
       });
     }
 
-    // Add Gallery Photos
+    // Add Gallery Images
     if (Array.isArray(p.galleryImages)) {
       p.galleryImages.forEach((img, idx) => {
         const imgUrl = typeof img === 'string' ? img : img?.url;
@@ -52,7 +53,7 @@ export default async function GalleryPage() {
       <Navbar />
       <main style={{ minHeight: '100vh', background: '#050505', color: '#ffffff', paddingTop: 130, paddingBottom: 100, position: 'relative' }}>
         
-        {/* Top Dark Overlay for Navbar Visibility */}
+        {/* Ambient Top Gradient */}
         <div style={{
           position: 'absolute',
           top: 0, left: 0, right: 0, height: 220,
@@ -62,7 +63,6 @@ export default async function GalleryPage() {
         }} />
 
         <div style={{ maxWidth: 1300, margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 2 }}>
-          {/* Header */}
           <header style={{ marginBottom: 60, textAlign: 'center' }}>
             <span style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: 10, letterSpacing: '0.28em', color: '#d4af37', textTransform: 'uppercase', display: 'block', marginBottom: 12, fontWeight: 500 }}>
               VISUAL GALLERY
@@ -75,7 +75,6 @@ export default async function GalleryPage() {
             </p>
           </header>
 
-          {/* Full Screen Lightbox Gallery Component */}
           {allImages.length > 0 ? (
             <GalleryLightbox images={allImages} title="Pankaj Studio Gallery" />
           ) : (
