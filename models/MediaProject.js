@@ -23,7 +23,6 @@ const MediaProjectSchema = new Schema(
     },
     category: {
       type: String, required: true,
-      // 🌟 Yahan nayi categories update kar di hain
       enum: [
         'candid-photography', 
         'cinematography', 
@@ -45,20 +44,15 @@ const MediaProjectSchema = new Schema(
       country: { type: String, trim: true, default: 'India' },
     },
     eventDate: { type: Date, default: null, index: true },
-    
-    // 🌟 ALBUM KA COVER PHOTO 🌟
     coverImage: {
       type: ImageSchema,
       required: [true, 'Cover image is required.'],
     },
-    
-    // 🌟 ALBUM KI ANDAR KI PHOTOS (Max 100 kar diya hai) 🌟
     galleryImages: {
       type: [ImageSchema],
       default: [],
       validate: { validator: (a) => a.length <= 100, message: 'Max 100 album images allowed.' },
     },
-    
     videoEmbedUrl: { type: String, trim: true, default: '' },
     videoThumbnailUrl: { type: String, trim: true, default: '' },
     videoDuration: { type: String, trim: true, default: '' },
@@ -75,21 +69,6 @@ const MediaProjectSchema = new Schema(
 
 MediaProjectSchema.index({ category: 1, featured: -1, eventDate: -1 });
 MediaProjectSchema.index({ isPublished: 1, sortOrder: -1, createdAt: -1 });
-
-// Statics
-MediaProjectSchema.statics.findByCategory = function (category, { limit = 12, skip = 0 } = {}) {
-  const q = { isPublished: true };
-  if (category && category !== 'all') q.category = category;
-  return this.find(q).sort({ featured: -1, sortOrder: -1, eventDate: -1 }).skip(skip).limit(limit)
-    .select('title slug category storyHighlight coverImage location eventDate is4K featured videoDuration').lean();
-};
-
-MediaProjectSchema.statics.findCinemaLounge = function (limit = 10) {
-  // 🌟 Yahan 'cinema-4k' ki jagah 'cinematography' kar diya hai
-  return this.find({ category: 'cinematography', isPublished: true, videoEmbedUrl: { $ne: '' } })
-    .sort({ featured: -1, sortOrder: -1 }).limit(limit)
-    .select('title slug storyHighlight coverImage videoEmbedUrl videoThumbnailUrl videoDuration is4K location eventDate').lean();
-};
 
 const MediaProject = models.MediaProject || model('MediaProject', MediaProjectSchema);
 export default MediaProject;
