@@ -5,10 +5,10 @@ import Link from 'next/link';
 // 🌟 APNA LOGO YAHAN LINK KAREIN 🌟
 const LOGO_PATH = '/pstudiologo.png'; 
 
-// 🌟 UPDATED NAV LINKS WITH DROPDOWN LOGIC 🌟
+// 🌟 UPDATED NAV LINKS WITH 'WORK' BUTTON 🌟
 const NAV_LINKS = [
   { href: '/', label: 'Home' },
-  { href: '/work', label: 'Gallery' },
+  { href: '/work', label: 'Work' },
   { href: '/service', label: 'Services' },
   { 
     label: 'About ▾', 
@@ -20,10 +20,10 @@ const NAV_LINKS = [
   },
 ];
 
-// 🌟 MOBILE MENU LINKS (Flattened for better mobile UX) 🌟
+// 🌟 MOBILE MENU LINKS 🌟
 const MOBILE_LINKS = [
   { href: '/', label: 'Home' },
-  { href: '/work', label: 'Gallery' },
+  { href: '/work', label: 'Work' },
   { href: '/service', label: 'Services' },
   { href: '/about', label: 'About The Studio' },
   { href: '/about/team', label: 'Behind The Lens' },
@@ -55,7 +55,7 @@ export default function Navbar() {
         borderBottom: scrolled ? '1px solid rgba(212, 175, 55, 0.1)' : '1px solid transparent' 
       }}>
         
-        {/* 🌟 PREMIUM PHOTOGRAPHY BRANDING BLOCK 🌟 */}
+        {/* 🌟 BRANDING BLOCK 🌟 */}
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none' }} className="branding-block">
           <img 
             src={LOGO_PATH} 
@@ -63,7 +63,6 @@ export default function Navbar() {
             style={{ height: scrolled ? 36 : 42, width: 'auto', display: 'block', transition: 'height 0.4s ease' }} 
             className="navbar-logo"
           />
-          {/* Dual-Font Studio Typography */}
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <span className="brand-name" style={{ fontFamily: '"Great Vibes", cursive', fontSize: 26, color: '#ffffff', lineHeight: 1, letterSpacing: '1px', transition: 'color 0.3s ease' }}>
               Pankaj
@@ -77,7 +76,6 @@ export default function Navbar() {
         {/* 🌟 DESKTOP NAVIGATION 🌟 */}
         <nav style={{ display: 'flex', alignItems: 'center', gap: 16 }} className="desktop-nav">
           {NAV_LINKS.map((l, index) => {
-            // Dropdown Menu Logic for Desktop
             if (l.isDropdown) {
               return (
                 <div key={index} className="nav-item-dropdown" style={{ position: 'relative', display: 'inline-block' }}>
@@ -87,7 +85,6 @@ export default function Navbar() {
                     {l.label}
                   </span>
                   
-                  {/* Dropdown Content */}
                   <div className="dropdown-content">
                     {l.dropdownItems.map((dropItem) => (
                       <Link key={dropItem.href} href={dropItem.href} className="dropdown-link">
@@ -99,7 +96,6 @@ export default function Navbar() {
               );
             }
 
-            // Normal Links
             return (
               <Link key={l.href} href={l.href} className="nav-link-premium" style={{ 
                 position: 'relative', fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', textDecoration: 'none', color: 'rgba(255,255,255,0.85)', transition: 'all 0.3s ease', padding: '8px 16px'
@@ -109,7 +105,6 @@ export default function Navbar() {
             );
           })}
           
-          {/* UPGRADED 'BOOK NOW' BUTTON */}
           <Link href="/contact" className="book-now-btn" style={{ 
             fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', textDecoration: 'none', padding: '12px 28px', backgroundColor: '#d4af37', color: '#000000', borderRadius: '4px', marginLeft: '12px', transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', boxShadow: '0 4px 15px rgba(212, 175, 55, 0.2)'
           }}>
@@ -117,7 +112,7 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        {/* MOBILE MENU TOGGLE BUTTON */}
+        {/* MOBILE MENU TOGGLE */}
         <button onClick={() => setMenuOpen(!menuOpen)} className="mobile-menu-btn" aria-label="Toggle menu" style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 8, display: 'none' }}>
           <div style={{ width: 24, display: 'flex', flexDirection: 'column', gap: 5 }}>
             {[0, 1, 2].map((i) => {
@@ -144,7 +139,6 @@ export default function Navbar() {
       {/* 🌟 MOBILE MENU 🌟 */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: '#050505', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 var(--page-gutter)', transform: menuOpen ? 'translateX(0)' : 'translateX(100%)', transition: 'transform 0.5s cubic-bezier(0.77,0,0.175,1)' }}>
         
-        {/* MOBILE MENU BRANDING (Scaled Up) */}
         <Link href="/" onClick={() => setMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 14, textDecoration: 'none', marginBottom: 50 }}>
           <img 
             src={LOGO_PATH}
@@ -170,7 +164,6 @@ export default function Navbar() {
         </nav>
       </div>
 
-      {/* 🌟 SAFE CSS INJECTION (Fixes Next.js 15 Hydration Crash) 🌟 */}
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;500;700&display=swap');
 
