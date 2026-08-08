@@ -1,154 +1,153 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import connectDB from '@/lib/mongodb';
-import Gallery from '@/models/Gallery';
+import MediaProject from '@/models/MediaProject';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
-export const dynamic = 'force-dynamic';
-export const metadata = { title: 'Our Work — Pankaj Studio' };
+export const revalidate = 60; // Har 1 min me revalidate hoga
 
-async function getGalleryData() {
+export const metadata = {
+  title: 'Our Portfolio & Albums — Pankaj Studio',
+  description: 'Explore our latest wedding photography, cinematography, and event albums.',
+};
+
+export default async function WorkPage() {
   await connectDB();
-  
-  const media = await Gallery.find().sort({ createdAt: -1 }).lean();
-  
-  // 🌟 Safe mapping: url aur imageUrl dono ko handle kar raha hai
-  const allImages = media
-    .filter(m => m.type === 'image' && (m.url || m.imageUrl))
-    .map(m => m.url || m.imageUrl);
 
-  const allVideos = media
-    .filter(m => m.type === 'video' && (m.url || m.videoUrl))
-    .map(m => ({
-      title: m.title || 'Cinematic Video',
-      url: m.url || m.videoUrl || '',
-      is4K: Boolean(m.is4K)
-    }));
-
-  return { allImages, allVideos };
-}
-
-export default async function WorkPage({ searchParams }) {
-  const params = await searchParams;
-  const view = params?.view || 'photos';
-
-  const { allImages, allVideos } = await getGalleryData();
-
-  // 🌟 FIX 1: Safe Embed check (Prevents undefined.includes crash)
-  const isEmbed = (url) => {
-    if (!url || typeof url !== 'string') return false;
-    return url.includes('youtube.com') || url.includes('youtu.be') || url.includes('vimeo.com');
-  };
-
-  const tabStyle = (isActive) => ({
-    padding: '12px 32px',
-    borderRadius: '30px',
-    fontFamily: '"DM Sans", sans-serif',
-    fontSize: 13,
-    fontWeight: isActive ? 600 : 400,
-    textTransform: 'uppercase',
-    letterSpacing: '0.1em',
-    color: isActive ? '#fff' : '#888',
-    background: isActive ? '#1a1a1a' : 'transparent',
-    border: isActive ? '1px solid rgba(255,255,255,0.2)' : '1px solid transparent',
-    transition: 'all 0.3s ease',
-    textDecoration: 'none'
-  });
+  // Sirf vahi projects fetch honge jo 'isPublished: true' hain
+  const projects = await MediaProject.find({ isPublished: true })
+    .sort({ sortOrder: -1, createdAt: -1 })
+    .select('title slug category coverImage galleryImages storyHighlight location is4K eventDate')
+    .lean();
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', paddingTop: 100, paddingBottom: 80 }}>
-      
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 24px' }}>
-        
-        <Navbar />
-        
-        {/* Header & Tabs */}
-        <div style={{ textAlign: 'center', marginBottom: 60 }}>
-          <h1 style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: 'clamp(40px, 6vw, 64px)', fontStyle: 'italic', fontWeight: 300, marginBottom: 24 }}>
-            Our Gallery
-          </h1>
+    <>
+      <Navbar />
+      <main style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', paddingTop: 100, paddingBottom: 100 }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
           
-          <div style={{ display: 'inline-flex', background: '#111', padding: 6, borderRadius: '40px', border: '1px solid rgba(255,255,255,0.05)' }}>
-            <Link href="?view=photos" style={tabStyle(view === 'photos')}>
-              Image Gallery
-            </Link>
-            <Link href="?view=videos" style={tabStyle(view === 'videos')}>
-              4K Videos
-            </Link>
+          {/* Header */}
+          <header style={{ marginBottom: 60, textAlign: 'center' }}>
+            <span style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: 10, letterSpacing: '0.25em', color: '#c9a84c', textTransform: 'uppercase', display: 'block', marginBottom: 12 }}>
+              Selected Works
+            </span>
+            <h1 style={{ fontFamily: 'var(--font-display, serif)', fontSize: 'clamp(36px, 5vw, 64px)', fontStyle: 'italic', fontWeight: 300, marginBottom: 16 }}>
+              Albums & Stories
+            </h1>
+            <p style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: 11, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+              Click any album to open the full photo gallery
+            </p>
+          </header>
+
+          {/* Project Albums Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 32 }}>
+            {projects.map((p) => {
+              const coverUrl = typeof p.coverImage === 'string' ? p.coverImage : p.coverImage?.url;
+              const photoCount = p.galleryImages?.length || 0;
+
+              return (
+                /* 🌟 HAR CARD PAR CLICK KARNE PAR ALBUM REDIRECT HONGA */
+                <Link
+                  key={p._id.toString()}
+                  href={`/work/${p.slug}`}
+                  style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+                >
+                  <div 
+                    style={{ 
+                      background: '#141414', 
+                      borderRadius: 8, 
+                      overflow: 'hidden', 
+                      border: '1px solid rgba(255,255,255,0.06)',
+                      transition: 'transform 0.3s ease, border-color 0.3s ease'
+                    }}
+                    className="portfolio-card"
+                  >
+                    {/* Cover Photo Frame */}
+                    <div style={{ position: 'relative', aspectRatio: '16/10', background: '#111', overflow: 'hidden' }}>
+                      {coverUrl && (
+                        <Image
+                          src={coverUrl}
+                          alt={p.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          style={{ objectFit: 'cover' }}
+                        />
+                      )}
+                      
+                      {/* Photo Count Badge */}
+                      <span style={{ 
+                        position: 'absolute', 
+                        bottom: 12, 
+                        right: 12, 
+                        background: 'rgba(0,0,0,0.8)', 
+                        backdropFilter: 'blur(4px)',
+                        padding: '4px 10px', 
+                        borderRadius: 4, 
+                        fontFamily: 'var(--font-mono, monospace)', 
+                        fontSize: 10, 
+                        color: '#fff',
+                        letterSpacing: '0.08em'
+                      }}>
+                        📷 {photoCount} Photos
+                      </span>
+
+                      {p.is4K && (
+                        <span style={{ 
+                          position: 'absolute', 
+                          top: 12, 
+                          left: 12, 
+                          background: 'linear-gradient(135deg,#e8d5a3,#c9a84c)', 
+                          padding: '2px 8px', 
+                          borderRadius: 2, 
+                          fontFamily: 'var(--font-mono, monospace)', 
+                          fontSize: 9, 
+                          color: '#000',
+                          fontWeight: 'bold'
+                        }}>
+                          4K FILM
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Card Content */}
+                    <div style={{ padding: 24 }}>
+                      <p style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: 9, color: '#c9a84c', letterSpacing: '0.18em', textTransform: 'uppercase', marginBottom: 8 }}>
+                        {p.category?.replace(/-/g, ' ')}
+                      </p>
+                      
+                      <h3 style={{ fontFamily: 'var(--font-display, serif)', fontSize: 22, fontStyle: 'italic', fontWeight: 300, color: '#fff', marginBottom: 8 }}>
+                        {p.title}
+                      </h3>
+
+                      {p.storyHighlight && (
+                        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', lineHeight: 1.6, fontWeight: 300 }}>
+                          {p.storyHighlight}
+                        </p>
+                      )}
+
+                      <div style={{ marginTop: 20, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-mono, monospace)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                        <span>View Album →</span>
+                        {p.location?.city && <span>📍 {p.location.city}</span>}
+                      </div>
+                    </div>
+
+                  </div>
+                </Link>
+              );
+            })}
           </div>
+
         </div>
+      </main>
 
-        {/* TAB 1: IMAGE MASONRY GRID */}
-        {view === 'photos' && (
-          <div style={{ columnCount: 3, columnGap: '16px', width: '100%' }} className="masonry-grid">
-            {allImages.length > 0 ? allImages.map((src, index) => (
-              <div key={index} style={{ marginBottom: '16px', breakInside: 'avoid', overflow: 'hidden', borderRadius: '8px' }}>
-                <img 
-                  src={src} 
-                  alt={`Gallery Image ${index}`} 
-                  loading="lazy"
-                  className="gallery-hover-effect"
-                  style={{ width: '100%', display: 'block', objectFit: 'cover' }}
-                />
-              </div>
-            )) : (
-              <p style={{ textAlign: 'center', color: '#666', gridColumn: '1 / -1', marginTop: 40 }}>No images uploaded yet.</p>
-            )}
-          </div>
-        )}
-
-        {/* TAB 2: 4K VIDEO GRID */}
-        {view === 'videos' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: 32 }}>
-            {allVideos.length > 0 ? allVideos.map((video, index) => (
-              <div key={index} style={{ background: '#111', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, background: '#000' }}>
-                  {isEmbed(video.url) ? (
-                    <iframe 
-                      src={video.url} 
-                      title={video.title}
-                      frameBorder="0" 
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                      allowFullScreen
-                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-                    />
-                  ) : (
-                    <video 
-                      src={video.url} 
-                      controls 
-                      preload="metadata" 
-                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} 
-                    />
-                  )}
-                </div>
-                <div style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 16, fontWeight: 400 }}>{video.title}</h3>
-                  {video.is4K && (
-                    <span style={{ fontFamily: '"DM Mono", monospace', fontSize: 10, padding: '4px 8px', background: 'rgba(201,168,76,0.1)', color: '#c9a84c', borderRadius: 4, letterSpacing: '0.1em' }}>
-                      4K ULTRA
-                    </span>
-                  )}
-                </div>
-              </div>
-            )) : (
-              <p style={{ textAlign: 'center', color: '#666', gridColumn: '1 / -1', marginTop: 40 }}>No videos uploaded yet.</p>
-            )}
-          </div>
-        )}
-
-      </div>
-
-      <style>{`
-        .gallery-hover-effect {
-          transition: transform 0.5s ease;
-          cursor: pointer;
+      <style jsx global>{`
+        .portfolio-card:hover {
+          transform: translateY(-6px);
+          border-color: rgba(201, 168, 76, 0.4) !important;
         }
-        .gallery-hover-effect:hover {
-          transform: scale(1.03);
-        }
-        @media (max-width: 1024px) { .masonry-grid { column-count: 2 !important; } }
-        @media (max-width: 640px) { .masonry-grid { column-count: 1 !important; } }
       `}</style>
-
-    </div>
+      <Footer />
+    </>
   );
 }
