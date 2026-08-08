@@ -1,6 +1,6 @@
+import mongoose from 'mongoose';
 import connectDB from '@/lib/mongodb';
 import MediaProject from '@/models/MediaProject';
-import GalleryItem from '@/models/GalleryItem';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import GalleryView from '@/components/GalleryView';
@@ -26,21 +26,24 @@ export default async function GalleryPage() {
   let projects = [];
   let galleryItems = [];
 
-  // Fetch from both models simultaneously
   try {
-    const [projRes, itemRes] = await Promise.all([
-      MediaProject.find({ isPublished: true })
-        .select('title slug category coverImage galleryImages videoEmbedUrl is4K')
-        .sort({ createdAt: -1 })
-        .lean(),
-      GalleryItem.find({ isPublished: true })
-        .sort({ createdAt: -1 })
-        .lean()
-        .catch(() => []) // Fallback if model empty or not created yet
-    ]);
+    // 1. Fetch Work / Albums Projects
+    const projRes = await MediaProject.find({ isPublished: true })
+      .select('title slug category coverImage galleryImages videoEmbedUrl is4K')
+      .sort({ createdAt: -1 })
+      .lean();
 
     projects = JSON.parse(JSON.stringify(projRes || []));
-    galleryItems = JSON.parse(JSON.stringify(itemRes || []));
+
+    // 2. Safe Dynamic Model Lookup (Build Error-Free)
+    const GalleryModel = mongoose.models.GalleryItem || mongoose.models.Gallery || mongoose.models.Media || null;
+
+    if (GalleryModel) {
+      const itemRes = await GalleryModel.find({ isPublished: true })
+        .sort({ createdAt: -1 })
+        .lean();
+      galleryItems = JSON.parse(JSON.stringify(itemRes || []));
+    }
   } catch (err) {
     console.error('Data fetch error on gallery page:', err);
   }
@@ -48,9 +51,9 @@ export default async function GalleryPage() {
   const allImages = [];
   const allVideos = [];
 
-  // 1. Process Photos & Videos from Work/Albums
+  // Process Photos & Videos from Work/Albums
   projects.forEach((p) => {
-    // Work Videos
+    // Videos
     if (p.videoEmbedUrl) {
       const embed = toEmbedUrl(p.videoEmbedUrl);
       if (embed) {
@@ -64,7 +67,7 @@ export default async function GalleryPage() {
       }
     }
 
-    // Work Cover Photo
+    // Cover Photo
     if (p.coverImage?.url || typeof p.coverImage === 'string') {
       const coverUrl = typeof p.coverImage === 'string' ? p.coverImage : p.coverImage.url;
       allImages.push({
@@ -73,7 +76,7 @@ export default async function GalleryPage() {
       });
     }
 
-    // Work Gallery Photos
+    // Gallery Photos
     if (Array.isArray(p.galleryImages)) {
       p.galleryImages.forEach((img, idx) => {
         const imgUrl = typeof img === 'string' ? img : img?.url;
@@ -87,9 +90,8 @@ export default async function GalleryPage() {
     }
   });
 
-  // 2. Process Photos & Videos from Admin Direct Gallery Section
+  // Process Photos & Videos from Direct Admin Gallery Uploads (if model registered)
   galleryItems.forEach((item) => {
-    // Direct Admin Video
     if (item.type === 'video' || item.videoEmbedUrl || item.videoUrl) {
       const videoSrc = item.videoEmbedUrl || item.videoUrl;
       const embed = toEmbedUrl(videoSrc);
@@ -102,9 +104,7 @@ export default async function GalleryPage() {
           embedUrl: embed,
         });
       }
-    } 
-    // Direct Admin Photo
-    else if (item.type === 'photo' || item.imageUrl || item.url) {
+    } else if (item.type === 'photo' || item.imageUrl || item.url) {
       const imgUrl = item.imageUrl || item.url;
       if (imgUrl) {
         allImages.push({
