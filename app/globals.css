@@ -65,3 +65,20 @@ img, .portfolio-card, .project-card, .gallery-item-wrap {
 .card-overlay, .backdrop-blur {
   will-change: opacity;
 }
+/* Optimize iframes */
+iframe {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Fallback for heavy blur which causes 90% of scroll lag */
+.portfolio-card span, .card-overlay {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(0, 0, 0, 0.85) !important; /* Solid dark transparent instead of blur */
+}
+
+/* Improve Image rendering speed */
+.card-img {
+  content-visibility: auto; /* Tells browser to skip rendering if not on screen */
+}

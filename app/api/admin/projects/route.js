@@ -6,21 +6,26 @@ import { slugify } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
+// 1. GET: Fetch list of projects with pagination & filtering
 export async function GET(request) {
   try {
     const session = await getAdminSession();
-    if (!session) return NextResponse.json({ success: false, error: 'Unauthorized.' }, { status: 401 });
+    if (!session) {
+      return NextResponse.json({ success: false, error: 'Unauthorized.' }, { status: 401 });
+    }
 
     await connectDB();
 
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 100);
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = Math.min(parseInt(searchParams.get('limit') || '20', 10), 100);
     const skip = (page - 1) * limit;
 
     const query = {};
-    if (category && category !== 'all') query.category = category;
+    if (category && category !== 'all') {
+      query.category = category;
+    }
 
     const [projects, total] = await Promise.all([
       MediaProject.find(query)
@@ -35,6 +40,7 @@ export async function GET(request) {
     return NextResponse.json({
       success: true,
       data: projects,
+      projects, // Included for backward compatibility with different components
       pagination: { total, page, limit, pages: Math.ceil(total / limit) },
     });
   } catch (error) {
@@ -43,31 +49,62 @@ export async function GET(request) {
   }
 }
 
+// 2. POST: Create a new project
 export async function POST(request) {
   try {
     const session = await getAdminSession();
-    if (!session) return NextResponse.json({ success: false, error: 'Unauthorized.' }, { status: 401 });
+    if (!session) {
+      return NextResponse.json({ success: false, error: 'Unauthorized.' }, { status: 401 });
+    }
 
     await connectDB();
     const body = await request.json();
 
-    // Auto-generate slug from title if not provided
-    if (!body.slug && body.title) {
-      body.slug = slugify(body.title);
+    // Required field validation
+    if (!body.title) {
+      return NextResponse.json({ success: false, error: 'Title is required.' }, { status: 400 });
+    }
+    if (!body.category) {
+      return NextResponse.json({ success: false, error: 'Category is required.' }, { status: 400 });
+    }
+    if (!body.coverImage?.url) {
+      return NextResponse.json({ success: false, error: 'Cover image is required.' }, { status: 400 });
     }
 
-    // Validate required fields
-    if (!body.title) return NextResponse.json({ success: false, error: 'Title is required.' }, { status: 400 });
-    if (!body.category) return NextResponse.json({ success: false, error: 'Category is required.' }, { status: 400 });
-    if (!body.coverImage?.url) return NextResponse.json({ success: false, error: 'Cover image is required.' }, { status: 400 });
+    // Auto-generate or Sanitize Slug to match Mongoose Regex: /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+    const rawSlug = body.slug || (slugify ? slugify(body.title) : body.title);
+    body.slug = rawSlug
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/[\s_]+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+    // Convert empty eventDate string ("") to null to avoid Mongoose CastError
+    if (body.eventDate !== undefined) {
+      body.eventDate = body.eventDate ? new Date(body.eventDate) : null;
+    }
+
+    // Ensure tags is passed as an array
+    if (typeof body.tags === 'string') {
+      body.tags = body.tags.split(',').map((t) => t.trim()).filter(Boolean);
+    }
 
     const project = await MediaProject.create(body);
-    return NextResponse.json({ success: true, data: project }, { status: 201 });
+
+    return NextResponse.json({
+      success: true,
+      data: project,
+      project, // Dual-key support
+    }, { status: 201 });
+
   } catch (error) {
     if (error.code === 11000) {
       return NextResponse.json({ success: false, error: 'A project with this slug already exists.' }, { status: 409 });
     }
     console.error('Admin POST /api/admin/projects error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to create project.' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message || 'Failed to create project.' }, { status: 500 });
   }
 }

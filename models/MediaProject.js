@@ -18,11 +18,16 @@ const MediaProjectSchema = new Schema(
   {
     title: { type: String, required: true, trim: true, maxlength: 120 },
     slug: {
-      type: String, required: true, unique: true, trim: true, lowercase: true,
+      type: String, 
+      required: true, 
+      unique: true, 
+      trim: true, 
+      lowercase: true,
       match: [/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug must be lowercase hyphen-separated.'],
     },
     category: {
-      type: String, required: true,
+      type: String, 
+      required: true,
       enum: [
         'candid-photography', 
         'cinematography', 
@@ -44,15 +49,23 @@ const MediaProjectSchema = new Schema(
       country: { type: String, trim: true, default: 'India' },
     },
     eventDate: { type: Date, default: null, index: true },
+    
+    // Album Cover Photo Object
     coverImage: {
       type: ImageSchema,
       required: [true, 'Cover image is required.'],
     },
+    
+    // Gallery Photos Inside Album (Max 100)
     galleryImages: {
       type: [ImageSchema],
       default: [],
-      validate: { validator: (a) => a.length <= 100, message: 'Max 100 album images allowed.' },
+      validate: { 
+        validator: (a) => a.length <= 100, 
+        message: 'Max 100 album images allowed.' 
+      },
     },
+    
     videoEmbedUrl: { type: String, trim: true, default: '' },
     videoThumbnailUrl: { type: String, trim: true, default: '' },
     videoDuration: { type: String, trim: true, default: '' },

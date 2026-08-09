@@ -11,30 +11,47 @@ cloudinary.config({
 export async function POST(request) {
   try {
     const data = await request.formData();
-    const file = data.get('file'); // Ensure frontend sends the image as 'file'
+    const file = data.get('file'); // Image File
+    const category = data.get('category') || 'general'; // Folder Category
 
     if (!file) {
       return NextResponse.json({ success: false, error: 'File nahi mili' }, { status: 400 });
     }
 
-    // File ko direct memory (buffer) mein read karna
+    // File ko buffer me convert karna
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Direct Cloudinary par upload karna (bina local save kiye)
+    // Dynamic folder structure in Cloudinary
+    const folderName = `pankaj_studio/${category}`;
+
+    // Cloudinary upload stream
     const uploadResult = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
-        { folder: 'pankaj_studio_gallery' }, // Cloudinary mein is naam ka folder ban jayega
+        { folder: folderName },
         (error, result) => {
           if (error) reject(error);
           else resolve(result);
         }
       );
-      uploadStream.end(buffer); // Buffer ko stream mein daal diya
+      uploadStream.end(buffer);
     });
 
-    // uploadResult.secure_url hi hamari photo ka asli live link hai
-    return NextResponse.json({ success: true, url: uploadResult.secure_url }, { status: 200 });
+    // 🌟 Schema Compatible Image Object
+    const imageObj = {
+      url: uploadResult.secure_url,
+      width: uploadResult.width || 0,
+      height: uploadResult.height || 0,
+      filename: file.name || uploadResult.original_filename || '',
+      altText: '',
+    };
+
+    // 🌟 Both 'url' and 'image' object returned for 100% compatibility across all components
+    return NextResponse.json({
+      success: true,
+      url: uploadResult.secure_url,
+      image: imageObj,
+    }, { status: 200 });
 
   } catch (error) {
     console.error('Upload Error:', error);

@@ -26,7 +26,7 @@ async function getData() {
       CarouselImage.find({ isActive: true }).sort({ createdAt: -1 }).lean(),
     ]);
 
-    // 🌟 FIX 3: Safe Data Normalization (HAR component ko safe properties deta hai)
+    // Safe Data Normalization
     const normalizedCarousel = (rawCarouselImages || []).map(img => ({
       ...img,
       _id: img._id?.toString(),
@@ -72,20 +72,30 @@ export default async function HomePage() {
     <>
       <Navbar /> 
       <main>
-        {/* 1. Welcome Banners */}
+        {/* 1. Welcome Banners (Loads immediately) */}
         <WelcomeHero images={carouselImages} />
       
+        {/* 🌟 SCROLL LAG FIX: Wrapped heavy components in optimized sections 🌟 */}
+        
         {/* 2. Cinemalounge */}
-        <HeroAndCinema heroProject={heroProject} cinemaProjects={cinemaProjects} />
+        <section className="optimized-section" style={{ containIntrinsicSize: '800px' }}>
+          <HeroAndCinema heroProject={heroProject} cinemaProjects={cinemaProjects} />
+        </section>
           
         {/* 3. Portfolio / Milestones */}
-        <MilestonesHub projects={portfolioProjects} />
+        <section className="optimized-section" style={{ containIntrinsicSize: '1200px' }}>
+          <MilestonesHub projects={portfolioProjects} />
+        </section>
 
         {/* 4. About Strip */}
-        <AboutStrip />
+        <section className="optimized-section" style={{ containIntrinsicSize: '400px' }}>
+          <AboutStrip />
+        </section>
 
         {/* 5. Client Love */}
-        <ClientLove />
+        <section className="optimized-section" style={{ containIntrinsicSize: '600px' }}>
+          <ClientLove />
+        </section>
 
         {/* 6. By The Numbers */}
         <ByTheNumbers />
@@ -96,6 +106,31 @@ export default async function HomePage() {
         {/* 8. FAQs */}
         <AccordionFAQ />
       </main>
+
+      {/* 🌟 LAG KILLER CSS 🌟 */}
+      <style dangerouslySetInnerHTML={{__html: `
+        /* Force smooth scrolling for the whole page */
+        html {
+          scroll-behavior: smooth;
+        }
+
+        /* 
+         * content-visibility: auto tells the browser NOT to render or paint 
+         * the internal images/iframes until the user scrolls near them. 
+         * This instantly frees up GPU memory and stops scroll lagging.
+         */
+        .optimized-section {
+          content-visibility: auto;
+          transform: translateZ(0); /* Forces Hardware GPU Acceleration */
+          will-change: transform;
+        }
+
+        /* Fallback optimization for iframes */
+        iframe {
+          transform: translateZ(0);
+        }
+      `}} />
+      
       <Footer />
     </>
   );
