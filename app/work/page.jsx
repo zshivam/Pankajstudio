@@ -8,8 +8,8 @@ import Footer from '@/components/Footer';
 export const revalidate = 60;
 
 export const metadata = {
-  title: 'Our Portfolio & Albums — Pankaj Studio',
-  description: 'Explore our latest wedding photography, cinematography, and event albums.',
+  title: 'Curated Stories — Pankaj Studio',
+  description: 'Explore visual journeys and complete albums from our most memorable events.',
 };
 
 export default async function WorkPage() {
@@ -40,16 +40,16 @@ export default async function WorkPage() {
 
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 2 }}>
           
-          {/* Header */}
+          {/* 🌟 PREMIUM HEADER 🌟 */}
           <header style={{ marginBottom: 60, textAlign: 'center' }}>
             <span style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: 10, letterSpacing: '0.28em', color: '#d4af37', textTransform: 'uppercase', display: 'block', marginBottom: 12, fontWeight: 500 }}>
-              PORTFOLIO GALLERIES
+              FEATURED PORTFOLIO
             </span>
             <h1 style={{ fontFamily: 'var(--font-display, serif)', fontSize: 'clamp(38px, 5.5vw, 68px)', fontStyle: 'italic', fontWeight: 300, color: '#ffffff', marginBottom: 16, lineHeight: 1.1 }}>
-              Albums & Stories
+              Curated Stories
             </h1>
             <p style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: 11, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
-              Click any album to view full event gallery
+              Explore visual journeys and complete albums from our most memorable events
             </p>
           </header>
 
@@ -202,7 +202,7 @@ export default async function WorkPage() {
       </main>
 
       {/* 🌟 STANDARD HTML STYLES FOR SAFE SERVER-SIDE RENDERING 🌟 */}
-      <style>{`
+      <style dangerouslySetInnerHTML={{__html: `
         .portfolio-card:hover {
           transform: translateY(-6px);
           border-color: rgba(212, 175, 55, 0.6) !important;
@@ -230,7 +230,7 @@ export default async function WorkPage() {
         .portfolio-card:hover .card-overlay {
           opacity: 1;
         }
-      `}</style>
+      `}} />
       <Footer />
     </>
   );

@@ -8,8 +8,8 @@ import GalleryView from '@/components/GalleryView';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'Gallery — Photos & Videos | Pankaj Studio',
-  description: 'Complete visual feed combining photos and video films from all albums and studio uploads.',
+  title: 'Gallery — Moments & Cinema | Pankaj Studio',
+  description: 'Immerse yourself in a curated collection of our finest frames and cinematic films.',
 };
 
 // YouTube Embed URL Formatter
@@ -128,16 +128,16 @@ export default async function GalleryPage() {
 
         <div style={{ maxWidth: 1300, margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 2 }}>
           
-          {/* Page Header */}
+          {/* 🌟 PREMIUM GALLERY HEADER */}
           <header style={{ marginBottom: 40, textAlign: 'center' }}>
             <span style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: 10, letterSpacing: '0.28em', color: '#d4af37', textTransform: 'uppercase', display: 'block', marginBottom: 12, fontWeight: 500 }}>
-              COMPLETE VISUAL FEED
+              SIGNATURE ARCHIVES
             </span>
             <h1 style={{ fontFamily: 'var(--font-display, serif)', fontSize: 'clamp(38px, 5.5vw, 68px)', fontStyle: 'italic', fontWeight: 300, color: '#ffffff', marginBottom: 16 }}>
-              Photos & Videos
+              Moments & Cinema
             </h1>
             <p style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: 11, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
-              Switch between master photo stream and video films
+              Immerse yourself in a curated collection of our finest frames and cinematic films
             </p>
           </header>
 
