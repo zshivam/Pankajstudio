@@ -20,14 +20,13 @@ function HeroSection({ project }) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // Master Trick: Trigger animation every time it enters view, reset when it leaves
         if (entry.isIntersecting) {
           setIsAnimated(true);
         } else {
-          setIsAnimated(false); // Reset animation state when user scrolls away
+          setIsAnimated(false); 
         }
       },
-      { threshold: 0.25 } // Trigger when 25% of the section is visible
+      { threshold: 0.25 }
     );
 
     if (sectionRef.current) {
@@ -42,31 +41,20 @@ function HeroSection({ project }) {
   return (
     <section 
       ref={sectionRef}
-      // 🌟 FULL HEIGHT (100svh) maintained for grand image look
       style={{ position: 'relative', width: '100%', height: '100svh', minHeight: 600, background: '#050505', overflow: 'hidden', display: 'flex', alignItems: 'flex-end' }}
     >
       
       {/* 🌟 SHARED PRESTIGE ANIMATION CSS 🌟 */}
       <style>{`
-        /* The signature cinematic entry: slide, fade, and blur to focus */
         @keyframes signatureEntry {
           0% { opacity: 0; filter: blur(15px); transform: translateX(-40px); }
           100% { opacity: 1; filter: blur(0px); transform: translateX(0); }
         }
-
-        /* Default hidden state when user is on another section */
-        .text-hidden {
-          opacity: 0;
-          visibility: hidden;
-        }
-
-        /* 🌟 Title (Heading) uses the same style with immediate start */
+        .text-hidden { opacity: 0; visibility: hidden; }
         .animate-heading {
           visibility: visible;
           animation: signatureEntry 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
-        
-        /* 🌟 Caption uses the same style with a 0.3s stagger delay */
         .animate-subtext {
           visibility: visible;
           animation: signatureEntry 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s forwards;
@@ -87,10 +75,9 @@ function HeroSection({ project }) {
         </div>
       </div>
       
-      {/* 🌟 TEXT CONTAINER (z-index 3 puts it above blending layer) 🌟 */}
+      {/* 🌟 TEXT CONTAINER 🌟 */}
       <div style={{ position: 'relative', zIndex: 3, padding: '0 48px 80px', maxWidth: 700 }}>
         <h1 
-          // 🌟 HEADING NOW USES CINEMATIC ANIMATION 🌟
           className={isAnimated ? "animate-heading" : "text-hidden"} 
           style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: 'clamp(44px, 7vw, 80px)', fontWeight: 300, fontStyle: 'italic', color: '#fff', lineHeight: 1.05, marginBottom: 18 }}
         >
@@ -98,7 +85,6 @@ function HeroSection({ project }) {
         </h1>
         {project?.storyHighlight && (
           <p 
-            // Caption uses same style with delay
             className={isAnimated ? "animate-subtext" : "text-hidden"} 
             style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 16, color: 'rgba(255,255,255,0.7)', marginBottom: 20 }}
           >
@@ -111,7 +97,6 @@ function HeroSection({ project }) {
 }
 
 function CinemaLounge({ projects = [] }) {
-  // Cinema Lounge section remains centered and unchanged
   return (
     <section style={{ background: '#050505', padding: '80px 0 100px', fontFamily: '"DM Sans", sans-serif' }}>
       <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 32px' }}>
@@ -127,10 +112,14 @@ function CinemaLounge({ projects = [] }) {
              return (
                <div key={video._id} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                  <div style={{ width: '100%', aspectRatio: '16/9', background: '#111', borderRadius: 2, overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.5)' }}>
+                   {/* 🌟 LAG FIX: Removed autoplay=1, added loading="lazy" and fetchpriority */}
                    <iframe 
-                     src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=1`}
-                     style={{ width: '100%', height: '100%', border: 'none' }}
-                     allow="autoplay; encrypted-media" 
+                     src={`https://www.youtube.com/embed/${videoId}?mute=1&rel=0&modestbranding=1`}
+                     loading="lazy"
+                     fetchpriority="low"
+                     title={video.title || "Cinema Video"}
+                     style={{ width: '100%', height: '100%', border: 'none', backgroundColor: '#000' }}
+                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                      allowFullScreen
                    />
                  </div>
