@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
 import connectDB from '@/lib/mongodb';
 import MediaProject from '@/models/MediaProject';
+import Gallery from '@/models/Gallery'; // 🌟 Aapka Sahi Model Import
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import GalleryView from '@/components/GalleryView';
@@ -35,15 +35,13 @@ export default async function GalleryPage() {
 
     projects = JSON.parse(JSON.stringify(projRes || []));
 
-    // 2. Safe Dynamic Model Lookup (Build Error-Free)
-    const GalleryModel = mongoose.models.GalleryItem || mongoose.models.Gallery || mongoose.models.Media || null;
+    // 2. Fetch Admin Raw Gallery Dump (Aapka Gallery Model)
+    const itemRes = await Gallery.find()
+      .sort({ createdAt: -1 })
+      .lean();
+    
+    galleryItems = JSON.parse(JSON.stringify(itemRes || []));
 
-    if (GalleryModel) {
-      const itemRes = await GalleryModel.find({ isPublished: true })
-        .sort({ createdAt: -1 })
-        .lean();
-      galleryItems = JSON.parse(JSON.stringify(itemRes || []));
-    }
   } catch (err) {
     console.error('Data fetch error on gallery page:', err);
   }
@@ -51,7 +49,7 @@ export default async function GalleryPage() {
   const allImages = [];
   const allVideos = [];
 
-  // Process Photos & Videos from Work/Albums
+  // 📸 PROCESS 1: Photos & Videos from Work/Albums
   projects.forEach((p) => {
     // Videos
     if (p.videoEmbedUrl) {
@@ -90,28 +88,27 @@ export default async function GalleryPage() {
     }
   });
 
-  // Process Photos & Videos from Direct Admin Gallery Uploads (if model registered)
+  // 📸 PROCESS 2: Photos & Videos from Direct Admin Gallery (Aapka API Code format)
   galleryItems.forEach((item) => {
-    if (item.type === 'video' || item.videoEmbedUrl || item.videoUrl) {
-      const videoSrc = item.videoEmbedUrl || item.videoUrl;
-      const embed = toEmbedUrl(videoSrc);
+    // Admin Direct Videos
+    if (item.type === 'video' && item.url) {
+      const embed = toEmbedUrl(item.url); // Converts standard links to embed format
       if (embed) {
         allVideos.push({
           id: `gallery-v-${item._id}`,
           title: item.title || 'Studio Film',
-          category: item.category || 'Gallery Video',
+          category: 'Gallery Video',
           is4K: item.is4K || false,
-          embedUrl: embed,
+          embedUrl: embed, // Lightbox/Iframe needs embed URL
         });
       }
-    } else if (item.type === 'photo' || item.imageUrl || item.url) {
-      const imgUrl = item.imageUrl || item.url;
-      if (imgUrl) {
-        allImages.push({
-          url: imgUrl,
-          altText: item.title || item.altText || 'Studio Gallery Frame',
-        });
-      }
+    } 
+    // Admin Direct Photos (Aapka API 'image' aur 'url' use kar raha hai)
+    else if (item.type === 'image' && item.url) {
+      allImages.push({
+        url: item.url,
+        altText: item.altText || 'Studio Gallery Frame',
+      });
     }
   });
 
