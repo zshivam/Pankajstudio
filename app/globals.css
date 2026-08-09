@@ -47,3 +47,21 @@ html, body {
   overflow-x: hidden;
   max-width: 100%;
 }
+
+/* Enable Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Force Hardware Acceleration to fix scroll lag */
+img, .portfolio-card, .project-card, .gallery-item-wrap {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Optimize heavy filters for scrolling */
+.card-overlay, .backdrop-blur {
+  will-change: opacity;
+}
