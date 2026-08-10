@@ -49,7 +49,7 @@ const SERVICES_DATA = [
     title: 'Baby & Maternity', 
     subtitle: 'Life’s Milestones',
     desc: 'Celebrating life’s precious moments. Whether it is a grand birthday bash or the glowing beauty of motherhood, we freeze these joyful times into beautiful portraits.',
-    image: '/Baby.jpeg'
+    image: '/baby.jpeg'
   },
   { 
     title: 'Corporate Events', 
