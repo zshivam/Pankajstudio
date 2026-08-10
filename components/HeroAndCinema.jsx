@@ -65,7 +65,8 @@ function HeroSection({ project }) {
         <img 
           src={imgUrl} 
           alt="Royal Portrait" 
-          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', filter: 'saturate(0.65) brightness(0.72)' }} 
+          // 🌟 MOBILE FIX: objectPosition 'center' ensures the image is not awkwardly cut on small screens
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', filter: 'saturate(0.65) brightness(0.72)' }} 
         />
         
         {/* --- BLEND LAYER --- */}
@@ -75,18 +76,18 @@ function HeroSection({ project }) {
         </div>
       </div>
       
-      {/* 🌟 TEXT CONTAINER 🌟 */}
-      <div style={{ position: 'relative', zIndex: 3, padding: '0 48px 80px', maxWidth: 700 }}>
+      {/* 🌟 TEXT CONTAINER (MOBILE FIX: Padding reduced from 48px to 24px on sides) 🌟 */}
+      <div style={{ position: 'relative', zIndex: 3, padding: '0 24px 80px', maxWidth: 700, width: '100%' }}>
         <h1 
           className={isAnimated ? "animate-heading" : "text-hidden"} 
-          style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: 'clamp(44px, 7vw, 80px)', fontWeight: 300, fontStyle: 'italic', color: '#fff', lineHeight: 1.05, marginBottom: 18 }}
+          style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: 'clamp(36px, 7vw, 80px)', fontWeight: 300, fontStyle: 'italic', color: '#fff', lineHeight: 1.05, marginBottom: 18 }}
         >
           {project?.title || 'Capturing Your Story'}
         </h1>
         {project?.storyHighlight && (
           <p 
             className={isAnimated ? "animate-subtext" : "text-hidden"} 
-            style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 16, color: 'rgba(255,255,255,0.7)', marginBottom: 20 }}
+            style={{ fontFamily: '"DM Sans", sans-serif', fontSize: 'clamp(14px, 4vw, 16px)', color: 'rgba(255,255,255,0.7)', marginBottom: 20 }}
           >
             {project.storyHighlight}
           </p>
@@ -99,7 +100,7 @@ function HeroSection({ project }) {
 function CinemaLounge({ projects = [] }) {
   return (
     <section style={{ background: '#050505', padding: '80px 0 100px', fontFamily: '"DM Sans", sans-serif' }}>
-      <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 32px' }}>
+      <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 24px' }}>
         <div style={{ marginBottom: 60, textAlign: 'center' }}>
           <h2 style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: 42, fontStyle: 'italic', color: '#fff', marginBottom: 12 }}>Cinema Lounge</h2>
           <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, letterSpacing: '0.2em', textTransform: 'uppercase' }}>Shot in 4K Ultra HD</p>
@@ -111,8 +112,8 @@ function CinemaLounge({ projects = [] }) {
              
              return (
                <div key={video._id} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                 <div style={{ width: '100%', aspectRatio: '16/9', background: '#111', borderRadius: 2, overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.5)' }}>
-                   {/* 🌟 LAG FIX: Removed autoplay=1, added loading="lazy" and fetchpriority */}
+                 <div style={{ width: '100%', aspectRatio: '16/9', background: '#111', borderRadius: 4, overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.5)' }}>
+                   {/* 🌟 LAG FIX */}
                    <iframe 
                      src={`https://www.youtube.com/embed/${videoId}?mute=1&rel=0&modestbranding=1`}
                      loading="lazy"
