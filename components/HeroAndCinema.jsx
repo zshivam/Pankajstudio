@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 
-// 🌟 IMAGE PATH (Wahi grand full-screen image)
+// 🌟 IMAGE PATH
 const MY_IMAGE_PATH = '/Copy of DSC03244.jpg'; 
 
 const DEFAULT_HERO = {
@@ -20,32 +20,22 @@ function HeroSection({ project }) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsAnimated(true);
-        } else {
-          setIsAnimated(false); 
-        }
+        if (entry.isIntersecting) setIsAnimated(true);
+        else setIsAnimated(false); 
       },
       { threshold: 0.25 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) observer.unobserve(sectionRef.current);
-    };
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => { if (sectionRef.current) observer.unobserve(sectionRef.current); };
   }, []);
 
   return (
-    <section 
-      ref={sectionRef}
-      style={{ position: 'relative', width: '100%', height: '100svh', minHeight: 600, background: '#050505', overflow: 'hidden', display: 'flex', alignItems: 'flex-end' }}
-    >
+    <section ref={sectionRef} className="hero-responsive-section">
       
-      {/* 🌟 SHARED PRESTIGE ANIMATION CSS 🌟 */}
+      {/* 🌟 MAGICAL RESPONSIVE CSS 🌟 */}
       <style>{`
+        /* Animations */
         @keyframes signatureEntry {
           0% { opacity: 0; filter: blur(15px); transform: translateX(-40px); }
           100% { opacity: 1; filter: blur(0px); transform: translateX(0); }
@@ -59,28 +49,90 @@ function HeroSection({ project }) {
           visibility: visible;
           animation: signatureEntry 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s forwards;
         }
+
+        /* Base Settings */
+        .hero-responsive-section {
+          position: relative;
+          width: 100%;
+          background: #050505;
+          overflow: hidden;
+          display: flex;
+        }
+        
+        .hero-img-box img {
+          width: 100%;
+          height: 100%;
+          filter: saturate(0.65) brightness(0.72);
+        }
+
+        /* 💻 DESKTOP VIEW (Full Screen, Text on Image) */
+        @media (min-width: 769px) {
+          .hero-responsive-section {
+            height: 100svh;
+            min-height: 600px;
+            align-items: flex-end;
+          }
+          .hero-img-box {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+          }
+          .hero-img-box img {
+            object-fit: cover;
+            object-position: center;
+          }
+          .hero-text-box {
+            position: relative;
+            z-index: 3;
+            padding: 0 48px 80px;
+            max-width: 700px;
+            width: 100%;
+          }
+        }
+
+        /* 📱 MOBILE VIEW (Full Uncropped Image Top, Text Bottom) */
+        @media (max-width: 768px) {
+          .hero-responsive-section {
+            flex-direction: column;
+            height: auto;
+            padding-top: 80px; /* Space for Navbar */
+          }
+          .hero-img-box {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9; /* Fixes height automatically based on image width */
+          }
+          .hero-img-box img {
+            object-fit: contain; /* Guarantees 0% cropping */
+            background: #050505;
+          }
+          .hero-text-box {
+            position: relative;
+            width: 100%;
+            padding: 40px 24px 60px;
+            text-align: center; /* Center text looks better on mobile */
+          }
+          /* Hide gradients on mobile so they don't cover the small image */
+          .hero-gradient { display: none; } 
+        }
       `}</style>
 
-      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-        <img 
-          src={imgUrl} 
-          alt="Royal Portrait" 
-          // 🌟 MOBILE FIX: objectPosition 'center' ensures the image is not awkwardly cut on small screens
-          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', filter: 'saturate(0.65) brightness(0.72)' }} 
-        />
+      {/* 🖼️ IMAGE CONTAINER */}
+      <div className="hero-img-box">
+        <img src={imgUrl} alt="Royal Portrait" />
         
-        {/* --- BLEND LAYER --- */}
-        <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '30svh', background: 'linear-gradient(to bottom, #050505 0%, rgba(5,5,5,0.8) 15%, transparent 100%)' }} />
-            <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '70svh', background: 'linear-gradient(to top, rgba(5,5,5,0.95) 0%, rgba(5,5,5,0.6) 50%, transparent 100%)' }} />
+        {/* --- BLEND LAYER (Visible only on Desktop) --- */}
+        <div className="hero-gradient" style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
+            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '30%', background: 'linear-gradient(to bottom, #050505 0%, rgba(5,5,5,0.8) 15%, transparent 100%)' }} />
+            <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '70%', background: 'linear-gradient(to top, rgba(5,5,5,0.95) 0%, rgba(5,5,5,0.6) 50%, transparent 100%)' }} />
         </div>
       </div>
       
-      {/* 🌟 TEXT CONTAINER (MOBILE FIX: Padding reduced from 48px to 24px on sides) 🌟 */}
-      <div style={{ position: 'relative', zIndex: 3, padding: '0 24px 80px', maxWidth: 700, width: '100%' }}>
+      {/* 📝 TEXT CONTAINER */}
+      <div className="hero-text-box">
         <h1 
           className={isAnimated ? "animate-heading" : "text-hidden"} 
-          style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: 'clamp(36px, 7vw, 80px)', fontWeight: 300, fontStyle: 'italic', color: '#fff', lineHeight: 1.05, marginBottom: 18 }}
+          style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: 'clamp(36px, 8vw, 80px)', fontWeight: 300, fontStyle: 'italic', color: '#fff', lineHeight: 1.05, marginBottom: 18 }}
         >
           {project?.title || 'Capturing Your Story'}
         </h1>
