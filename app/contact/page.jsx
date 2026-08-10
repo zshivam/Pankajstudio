@@ -10,7 +10,7 @@ export const metadata = {
 const CONTACT_DETAILS = [
   { label: 'Based In', value: 'Deoria, Uttar Pradesh', sub: 'Available across India' },
   { label: 'Response Time', value: 'Within 24 hours', sub: 'Mon – Sat, 10am – 7pm IST' },
-  { label: 'Email', value: 'hello@pankajstudio.in', href: 'mailto:hello@pankajstudio.in', sub: 'For general enquiries' },
+  { label: 'Email', value: 'pankajstudiodeoria@gmail.com', href: 'mailto:pankajstudiodeoria@gmail.com', sub: 'For general enquiries' },
   { label: 'Instagram', value: '@pankajstudio', href: 'https://instagram.com/pankajstudio', sub: 'See our latest work' },
 ];
 
