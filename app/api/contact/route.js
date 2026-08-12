@@ -4,6 +4,9 @@ import nodemailer from 'nodemailer';
 export async function POST(request) {
   try {
     const { name, email, phone, service, eventDate, location, message } = await request.json();
+    // Ye Vercel ke logs me print karega ki asal me variable kya uth raha hai
+console.log("Vercel is trying to send mail FROM: ", process.env.SMTP_USER);
+console.log("Vercel is trying to send mail TO: ", process.env.CONTACT_RECIPIENT);
 
     if (!name || !email || !service || !message) {
       return NextResponse.json({ success: false, error: 'Required fields missing.' }, { status: 400 });
@@ -49,7 +52,7 @@ export async function POST(request) {
       html: `<div style="font-family:sans-serif;max-width:520px;color:#1a1714">
         <h2 style="font-size:20px;font-weight:400;font-style:italic">Thank you, ${name}.</h2>
         <p style="color:#5c5348;line-height:1.75;margin:16px 0">We have received your enquiry about <strong>${serviceLabel}</strong> and will get back to you within 24 hours.</p>
-        <p style="color:#9a9087;font-size:12px;border-top:1px solid #e4dfd9;padding-top:16px">Pankaj Studio · Lucknow, India</p>
+        <p style="color:#9a9087;font-size:12px;border-top:1px solid #e4dfd9;padding-top:16px">Pankaj Studio · Deoria, India</p>
       </div>`,
     });
 
