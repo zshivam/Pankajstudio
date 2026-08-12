@@ -24,7 +24,7 @@ export async function POST(request) {
     // Verify credentials
     if (username !== expectedUser || password !== expectedPass) {
       return NextResponse.json(
-        { success: false, error: 'Username ya Password galat hai!' },
+        { success: false, error: 'Incorrect Username or Password' },
         { status: 401 }
       );
     }
