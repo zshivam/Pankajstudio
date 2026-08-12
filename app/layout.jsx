@@ -6,7 +6,7 @@ const dmSans = DM_Sans({ subsets: ['latin'], weight: ['300','400','500'], style:
 const dmMono = DM_Mono({ subsets: ['latin'], weight: ['300','400'], variable: '--font-mono', display: 'swap' });
 
 const siteName = process.env.NEXT_PUBLIC_STUDIO_NAME || 'Pankaj Studio';
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://pankajstudio.online';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://pankajstudio.in';
 
 export const metadata = {
   metadataBase: new URL(siteUrl),
@@ -16,7 +16,6 @@ export const metadata = {
   openGraph: { type: 'website', siteName, locale: 'en_IN' },
   twitter: { card: 'summary_large_image' },
   robots: { index: true, follow: true },
-  
 };
 
 export default function RootLayout({ children }) {
@@ -25,7 +24,38 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="icon" href="/pstudiologo.svg" type="image/svg+xml" />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {children}
+
+        {/* 🌟 Fixed Bottom-Right Floating Book Now Button */}
+        <a 
+          href="/contact" 
+          style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            zIndex: 9999,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'linear-gradient(135deg, #d4af37 0%, #f3e5ab 50%, #d4af37 100%)',
+            color: '#000',
+            padding: '12px 22px',
+            borderRadius: '50px',
+            fontFamily: 'var(--font-sans), sans-serif',
+            fontSize: '12px',
+            fontWeight: '700',
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            textDecoration: 'none',
+            boxShadow: '0 8px 25px rgba(0, 0, 0, 0.4)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            transition: 'all 0.3s ease',
+          }}
+        >
+          Book Now
+        </a>
+      </body>
     </html>
   );
 }

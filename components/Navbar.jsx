@@ -66,11 +66,11 @@ export default function Navbar() {
             className="navbar-logo"
           />
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <span className="brand-name" style={{ fontFamily: '"Great Vibes", cursive', fontSize: 26, color: '#ffffff', lineHeight: 1, letterSpacing: '1px', transition: 'color 0.3s ease' }}>
+             <span className="brand-sub" style={{ fontFamily: '"Montserrat", sans-serif', fontSize: 15, fontWeight: 500, color: '#d4af37', textTransform: 'uppercase', letterSpacing: '0.4em', marginTop: 2, transition: 'color 0.3s ease' }}>
               Pankaj
+               <span className="brand-sub" style={{ fontFamily: '"Montserrat", sans-serif', fontSize: 15, fontWeight: 500, color: '#fcfcfc', textTransform: 'uppercase', letterSpacing: '0.4em', marginTop: 2, transition: 'color 0.3s ease' }}>
+               Studio
             </span>
-            <span className="brand-sub" style={{ fontFamily: '"Montserrat", sans-serif', fontSize: 9, fontWeight: 400, color: '#d4af37', textTransform: 'uppercase', letterSpacing: '0.4em', marginTop: 2, transition: 'color 0.3s ease' }}>
-              Studio
             </span>
           </div>
         </Link>
@@ -84,7 +84,7 @@ export default function Navbar() {
                   <span className="nav-link-premium" style={{ 
                     position: 'relative', fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.85)', transition: 'all 0.3s ease', cursor: 'pointer', padding: '8px 14px' 
                   }}>
-                    {l.label}
+                  {l.label}
                   </span>
                   
                   <div className="dropdown-content">
