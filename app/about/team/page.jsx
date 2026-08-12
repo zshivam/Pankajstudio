@@ -36,6 +36,11 @@ export default function TeamPage() {
             <div className="profile-content">
               <p className="profile-subtitle">Founder & Lead Director</p>
               <h2 className="profile-name">Deepak Sahani</h2>
+
+              {/* 🏆 HONOR TAG ADDED HERE 🏆 */}
+              <div className="honor-badge">
+                <span>🏅 Appointed District In-Charge — Photographers Association, UP (Deoria Unit)</span>
+              </div>
               
               <div className="bio-content">
                 <p>
@@ -58,7 +63,7 @@ export default function TeamPage() {
                 </div>
                 <div className="achievement-box">
                   <h4>🏆</h4>
-                  <span>Award/Feature Name</span>
+                  <span>Awarded Photographer</span>
                 </div>
               </div>
 
@@ -121,7 +126,6 @@ export default function TeamPage() {
               A masterpiece is never created alone. Behind every frame you see stands a team you rarely notice — second-shooters catching angles Deepak can't be in two places for, lighting assistants chasing the perfect golden hour, and editors spending countless hours polishing every gallery before it reaches you. This is the crew that makes Pankaj Studio's flawless finish possible.
             </p>
 
-            {/* Large Cinematic Image (Updated to be purely auto-adjustable) */}
             <div className="wide-img-wrapper">
               <img 
                 src="/philosophy.jpg" 
@@ -240,8 +244,26 @@ export default function TeamPage() {
           font-size: clamp(40px, 5vw, 64px);
           color: #fff;
           font-weight: 400;
-          margin-bottom: 30px;
+          margin-bottom: 16px;
           line-height: 1.1;
+        }
+
+        /* 🌟 HONOR BADGE STYLING 🌟 */
+        .honor-badge {
+          display: inline-block;
+          background: rgba(212, 175, 55, 0.08);
+          border: 1px solid rgba(212, 175, 55, 0.3);
+          border-radius: 4px;
+          padding: 8px 14px;
+          margin-bottom: 24px;
+        }
+
+        .honor-badge span {
+          font-family: var(--font-sans), sans-serif;
+          font-size: 13px;
+          color: #d4af37;
+          font-weight: 500;
+          letter-spacing: 0.03em;
         }
 
         .bio-content {
@@ -274,7 +296,7 @@ export default function TeamPage() {
 
         .achievement-box h4 {
           font-family: "Playfair Display", serif;
-          font-size: 32px;
+          font-size: 28px;
           color: #d4af37;
           font-weight: 400;
           margin-bottom: 8px;
@@ -326,13 +348,10 @@ export default function TeamPage() {
           border-left: 3px solid #d4af37;
           padding-left: 20px;
         }
-/* 
-          UPDATED WIDE CREW PHOTO CSS 
-          Container size reduced to 50% to make the image half size and centered
-        */
+
         .wide-img-wrapper {
-          width: 50%; /* Image ka size aadha kr diya */
-          margin: 0 auto; /* Image ko center mein laane ke liye */
+          width: 50%;
+          margin: 0 auto;
           border-radius: 4px;
           overflow: hidden;
           position: relative;
@@ -375,7 +394,6 @@ export default function TeamPage() {
             grid-template-columns: 1fr 1fr;
           }
           
-          /* Mobile me thoda bada dikhe isliye width 100% kr di hai */
           .wide-img-wrapper {
             width: 100%;
           }

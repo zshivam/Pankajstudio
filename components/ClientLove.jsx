@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 
 const REVIEWS = [
-  { text: "Pankaj Studio didn't just take pictures; they captured the soul of our wedding. Every emotion looks so cinematic.", author: "Neha & Rahul" },
+  { text: "Pankaj Studio didn't just take pictures; they captured the soul of our wedding. Every emotion looks so cinematic.", author: "Shubham & Rama" },
   { text: "Professional, unobtrusive, and incredibly talented. The 4K video made my entire family feel like movie stars.", author: "Amit & Priya" },
   { text: "From the pre-wedding shoot to the final album delivery, the entire experience was pure luxury. Highly recommended!", author: "Sneha Jaiswal" }
 ];
