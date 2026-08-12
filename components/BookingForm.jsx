@@ -50,30 +50,22 @@ export default function BookingForm() {
   const [status, setStatus] = useState('idle');
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
-  // 🌟 NAYA WEB3FORMS JSON LOGIC 🌟
+  // 🌟 APNE BACKEND ROUTE (/api/contact) PAR MAIL BHEJNE KA LOGIC 🌟
   const onSubmit = async (data) => {
     setStatus('loading');
     try {
-      // Data ko json format me prepare kar rahe hain
-      const payload = {
-        ...data,
-        access_key: "28b0437b-321d-432d-a9c4-3efe7a35c087",
-        subject: "New Enquiry for Pankaj Studio",
-      };
-
-      const res = await fetch("https://api.web3forms.com/submit", {
+      const res = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(data),
       });
 
       const json = await res.json();
       
       if (!json.success) {
-        throw new Error(json.message || "Failed to submit form");
+        throw new Error(json.error || "Failed to submit form");
       }
       
       setStatus('success');
