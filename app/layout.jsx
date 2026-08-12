@@ -16,6 +16,9 @@ export const metadata = {
   openGraph: { type: 'website', siteName, locale: 'en_IN' },
   twitter: { card: 'summary_large_image' },
   robots: { index: true, follow: true },
+  verification: {
+    google: 'sohjsKLkoLMD54Hsp0GWWZj03JEieCZ3PwMa4t2SIs4',
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -23,6 +26,7 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable}`}>
       <head>
         <link rel="icon" href="/pstudiologo.svg" type="image/svg+xml" />
+        <meta name="google-site-verification" content="sohjsKLkoLMD54Hsp0GWWZj03JEieCZ3PwMa4t2SIs4" />
       </head>
       <body className="antialiased">
         {children}

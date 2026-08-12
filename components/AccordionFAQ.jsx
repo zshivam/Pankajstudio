@@ -9,7 +9,7 @@ const DEFAULT_FAQS = [
   { q: 'What is your editing style?', a: "Editorial and cinematic — natural skin tones, rich contrast, timeless filmic quality. We do not apply heavy presets that date quickly. Our style is consistent across all deliverables." },
   { q: 'What happens if you are unavailable on our date?', a: 'Your date is locked from the moment your booking deposit clears. In the rare event of an emergency, we maintain a trusted network of associate photographers trained to our exact standards.' },
   { q: 'Do you offer a 4K cinema package for events?', a: 'Yes — our Cinema Lounge tier is available for weddings, milestone birthdays, and corporate events. Footage in 4K Ultra HD, full colour grade, delivered as a private streaming link and a 4K master file.' },
-  { q: 'How is payment structured?', a: '30% retainer upon signing to secure your date. Remaining balance due 7 days before the event. Cinema projects carry an additional 20% on rough-cut delivery. Payments via bank transfer, UPI, or Razorpay.' },
+  { q: 'How is payment structured?', a: 'To secure your date, a 25% advance is required at booking confirmation, followed by 50% on the shoot day, and the remaining 25% upon final delivery. All edited photos and videos are delivered within 15 to 20 working days.' },
 ];
 
 function AccordionItem({ item, index, isOpen, onToggle, itemId }) {
