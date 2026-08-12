@@ -40,7 +40,7 @@ export default function RootLayout({ children }) {
             right: '24px',
             zIndex: 9999,
             display: 'inline-flex',
-            alignItems: 'center',
+            alignItems: 'center',  
             gap: '8px',
             background: 'linear-gradient(135deg, #d4af37 0%, #f3e5ab 50%, #d4af37 100%)',
             color: '#000',

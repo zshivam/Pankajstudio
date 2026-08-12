@@ -23,7 +23,7 @@ export default function ByTheNumbers() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 40, textAlign: 'center' }}>
           
           <div className="stat-card">
-            <h3 className="stat-number">500+</h3>
+            <h3 className="stat-number">2000+</h3>
             <p className="stat-label">Weddings Covered</p>
           </div>
 
