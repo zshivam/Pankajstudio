@@ -2,18 +2,7 @@ import Link from 'next/link';
 
 export default function AboutStrip() {
   return (
-    <section 
-      className="about-strip"
-      style={{ 
-        backgroundImage: 'linear-gradient(to right, rgba(15, 15, 15, 0.95) 0%, rgba(15, 15, 15, 0.85) 100%), url("/strip.jpg")',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-        padding: '100px var(--page-gutter)', 
-        borderTop: '1px solid rgba(255,255,255,0.05)',
-        borderBottom: '1px solid rgba(255,255,255,0.05)',
-      }} 
-    >
+    <section className="about-strip">
       <div style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '80px', alignItems: 'center' }} className="about-grid">
         
         {/* LEFT SIDE: Detailed Story & Ethos */}
@@ -46,7 +35,7 @@ export default function AboutStrip() {
         </div>
 
         {/* RIGHT SIDE: Premium Highlights */}
-        <div style={{ padding: '48px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, backdropFilter: 'blur(10px)' }} className="about-stats">
+        <div className="about-stats">
           <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontStyle: 'italic', color: '#fff', marginBottom: 36, borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: 16 }}>The Studio Promise</h3>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
@@ -67,9 +56,40 @@ export default function AboutStrip() {
       </div>
       
       <style>{`
+        /* 🌟 Main Strip Styles (Moved from inline to here) 🌟 */
+        .about-strip {
+          background-image: linear-gradient(to right, rgba(15, 15, 15, 0.95) 0%, rgba(15, 15, 15, 0.85) 100%), url("/strip.jpg");
+          background-size: cover;
+          background-position: center;
+          background-attachment: fixed;
+          padding: 100px var(--page-gutter);
+          border-top: 1px solid rgba(255,255,255,0.05);
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* 🌟 Stats Box Styles 🌟 */
+        .about-stats {
+          padding: 48px;
+          background: rgba(255,255,255,0.02);
+          border: 1px solid rgba(255,255,255,0.06);
+          border-radius: 8px;
+          backdrop-filter: blur(10px);
+        }
+
         @media(max-width:960px){
           .about-grid { grid-template-columns: 1fr !important; gap: 56px !important; }
           .about-stats { padding: 32px 24px !important; }
+        }
+
+        /* 📱 MOBILE LAG FIX (Zero Frame Drops) 📱 */
+        @media(max-width: 768px) {
+          .about-strip {
+            background-attachment: scroll !important; /* Disables laggy parallax on mobile */
+          }
+          .about-stats {
+            backdrop-filter: none !important; /* Disables heavy blur calculation */
+            background: rgba(20, 20, 20, 0.85) !important; /* Solid fallback color */
+          }
         }
       `}</style>
     </section>
