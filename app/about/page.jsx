@@ -1,4 +1,6 @@
+
 import Link from 'next/link';
+import Image from 'next/image'; // 🌟 1. Next.js Image Import Kiya
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import GoogleReviews from '@/components/GoogleReviews';
@@ -13,18 +15,25 @@ export default function AboutPage() {
     <>
       <Navbar />
       
-      {/* 🌟 MAIN CONTAINER: Parallax Background 🌟 */}
-      <main 
-        style={{ 
-          paddingTop: 64,
-          backgroundImage: 'linear-gradient(to right, rgba(5, 5, 5, 0.98) 0%, rgba(5, 5, 5, 0.92) 100%), url("/strip.jpg")', 
+      {/* 🌟 OPTIMIZED PARALLAX BACKGROUND (0% Lag) 🌟 */}
+      <div 
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: -1,
+          backgroundImage: 'linear-gradient(to right, rgba(5, 5, 5, 0.98) 0%, rgba(5, 5, 5, 0.92) 100%), url("/strip.jpg")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundAttachment: 'fixed', 
-          minHeight: '100vh',
-          color: '#fff'
+          transform: 'translateZ(0)', // Hardware acceleration
+          willChange: 'transform'
         }}
-      >
+      />
+      
+      {/* 🌟 MAIN CONTAINER 🌟 */}
+      <main style={{ paddingTop: 64, minHeight: '100vh', color: '#fff', position: 'relative', zIndex: 1 }}>
         
         {/* 🌟 HERO SECTION 🌟 */}
         <section style={{ background: 'transparent', padding: 'clamp(80px,12vw,120px) var(--page-gutter) clamp(40px,8vw,80px)' }}>
@@ -34,7 +43,6 @@ export default function AboutPage() {
               <span style={{ fontFamily: '"Montserrat", sans-serif', fontSize: 11, letterSpacing: '0.25em', color: '#d4af37', textTransform: 'uppercase' }}>Deoria's Finest</span>
               <span style={{ display: 'block', width: 28, height: 1, background: '#d4af37' }} />
             </div>
-            {/* 🌟 UPDATED FONT: Signature style for "Capturing Life..." 🌟 */}
             <h1 style={{ fontFamily: '"Playfair Display", "Cormorant Garamond", serif', fontSize: 'clamp(52px, 9vw, 96px)', fontWeight: 400, color: '#fff', lineHeight: 1.1, letterSpacing: '0.02em', marginBottom: 24 }}>
               Capturing Life, <br /><span style={{ color: '#d4af37' }}>Preserving Legacy.</span>
             </h1>
@@ -54,11 +62,19 @@ export default function AboutPage() {
                 </p>
               </div>
               <div className="editorial-image-wrapper">
-                <img src="/philosophy.jpg" alt="Our Philosophy" className="editorial-image" />
+                <Image 
+                  src="/philosophy.jpg" 
+                  alt="Our Philosophy" 
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="editorial-image" 
+                  loading="eager" // 1st image load fast
+                  quality={85}
+                />
               </div>
             </div>
 
-            {/* Block 2: Stills & Cinema (Image Left - Using row-reverse in CSS) */}
+            {/* Block 2: Stills & Cinema (Image Left) */}
             <div className="editorial-row reverse">
               <div className="editorial-content">
                 <h2 className="editorial-heading">The Art of Stills & Cinema</h2>
@@ -67,7 +83,15 @@ export default function AboutPage() {
                 </p>
               </div>
               <div className="editorial-image-wrapper">
-                <img src="/cinema.jpg" alt="Wedding Cinematography" className="editorial-image" />
+                <Image 
+                  src="/cinema.jpg" 
+                  alt="Wedding Cinematography" 
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="editorial-image" 
+                  loading="lazy"
+                  quality={85}
+                />
               </div>
             </div>
 
@@ -80,7 +104,15 @@ export default function AboutPage() {
                 </p>
               </div>
               <div className="editorial-image-wrapper">
-                <img src="/restoration.jpg" alt="Photo Restoration" className="editorial-image" />
+                <Image 
+                  src="/restoration.jpg" 
+                  alt="Photo Restoration" 
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="editorial-image" 
+                  loading="lazy"
+                  quality={85}
+                />
               </div>
             </div>
 
@@ -93,7 +125,15 @@ export default function AboutPage() {
                 </p>
               </div>
               <div className="editorial-image-wrapper">
-                <img src="/digital.jpeg" alt="Digital Solutions" className="editorial-image" />
+                <Image 
+                  src="/digital.jpeg" 
+                  alt="Digital Solutions" 
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="editorial-image" 
+                  loading="lazy"
+                  quality={85}
+                />
               </div>
             </div>
 
@@ -127,7 +167,6 @@ export default function AboutPage() {
               Find Us in Deoria 📍
             </h2>
 
-            {/* 🌟 UPDATED: Google Maps iframe with specific location query to show a red pin 🌟 */}
             <div style={{ width: '100%', height: 480, borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 40px rgba(0,0,0,0.5)' }}>
               <iframe 
                 width="100%" 
@@ -148,10 +187,8 @@ export default function AboutPage() {
       
       {/* 🌟 PREMIUM TYPOGRAPHY & LAYOUT STYLES 🌟 */}
       <style>{`
-        /* Added Great Vibes font import */
         @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
 
-        /* Editorial Layout Grid Settings */
         .editorial-row {
           display: flex;
           align-items: center;
@@ -177,19 +214,23 @@ export default function AboutPage() {
           border-radius: 4px;
           box-shadow: 0 20px 40px rgba(0,0,0,0.5);
           position: relative;
+          
+          /* 🌟 GPU Acceleration 🌟 */
+          transform: translateZ(0);
+          backface-visibility: hidden;
+          perspective: 1000px;
         }
 
         .editorial-image {
-          width: 100%;
-          height: 100%;
           object-fit: cover;
           transition: transform 0.7s ease;
+          will-change: transform;
         }
+        
         .editorial-image-wrapper:hover .editorial-image {
           transform: scale(1.05);
         }
 
-        /* Typography Styling */
         .editorial-heading {
           font-family: "Playfair Display", "Cormorant Garamond", serif;
           font-size: 38px;
@@ -216,7 +257,6 @@ export default function AboutPage() {
           box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 
-        /* 📱 MOBILE RESPONSIVENESS 📱 */
         @media(max-width: 900px) {
           .editorial-row {
             gap: 40px;
@@ -224,8 +264,6 @@ export default function AboutPage() {
         }
 
         @media(max-width: 768px) {
-          main { background-attachment: scroll !important; } 
-          
           .editorial-row, .editorial-row.reverse {
             flex-direction: column-reverse; 
             gap: 30px;

@@ -1,4 +1,6 @@
+
 import Link from 'next/link';
+import Image from 'next/image'; // 🌟 1. Next.js Image Import Kiya
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
@@ -70,18 +72,25 @@ export default function ServicePage() {
     <>
       <Navbar />
       
-      {/* 🌟 MAIN BACKGROUND (Parallax with strip.jpg fixed) 🌟 */}
-      <main 
-        style={{ 
-          backgroundColor: '#050505',
+      {/* 🌟 OPTIMIZED PARALLAX BACKGROUND (0% Lag) 🌟 */}
+      <div 
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: -1,
           backgroundImage: 'linear-gradient(to bottom, rgba(5, 5, 5, 0.85), rgba(5, 5, 5, 0.90)), url("/strip.jpg")',
           backgroundSize: 'cover',
           backgroundPosition: 'center top',
-          backgroundAttachment: 'fixed', // Parallax effect
-          minHeight: '100vh', 
-          color: '#fff' 
+          transform: 'translateZ(0)', // Hardware acceleration
+          willChange: 'transform'
         }}
-      >
+      />
+      
+      {/* 🌟 MAIN CONTENT WRAPPER 🌟 */}
+      <main style={{ minHeight: '100vh', color: '#fff', position: 'relative', zIndex: 1 }}>
         
         {/* 🌟 HERO SECTION 🌟 */}
         <section style={{ paddingTop: '180px', paddingBottom: '80px', textAlign: 'center', paddingLeft: 'var(--page-gutter)', paddingRight: 'var(--page-gutter)', background: 'transparent' }}>
@@ -110,15 +119,20 @@ export default function ServicePage() {
               return (
                 <div key={index} className={`episode-row ${isEven ? '' : 'reverse'}`}>
                   
-                  {/* The Image Wrapper */}
+                  {/* The Image Wrapper - Optimized for GPU */}
                   <div className="episode-image-wrapper">
                     <div className="episode-number">
                       0{index + 1}
                     </div>
-                    <img 
+                    {/* 🌟 NEXT.JS IMAGE REPLACEMENT 🌟 */}
+                    <Image 
                       src={service.image} 
                       alt={service.title} 
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 480px"
                       className="episode-img"
+                      loading={index < 2 ? "eager" : "lazy"} // Pehli 2 image fast load hongi, baaki scroll karne par
+                      quality={85}
                     />
                   </div>
 
@@ -180,14 +194,18 @@ export default function ServicePage() {
           border-radius: 4px;
           overflow: hidden;
           box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+          
+          /* 🌟 GPU Acceleration for Lag-Free Scroll 🌟 */
+          transform: translateZ(0);
+          backface-visibility: hidden;
+          perspective: 1000px;
         }
 
         .episode-img {
-          width: 100%;
-          height: 100%;
           object-fit: cover;
-          transition: transform 1s ease;
+          transition: transform 1s ease, filter 1s ease;
           filter: grayscale(10%) contrast(105%);
+          will-change: transform, filter; /* Prevents frame drops on hover */
         }
 
         .episode-image-wrapper:hover .episode-img {

@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image'; // 🌟 1. Next.js Image import kiya
 
 export default function MilestonesHub({ projects }) {
   // Note: Hum filhal MongoDB ke 'projects' prop ko ignore kar rahe hain 
@@ -37,13 +38,16 @@ export default function MilestonesHub({ projects }) {
             </Link>
           </div>
 
-          {/* Single Large Image */}
+          {/* Single Large Image - 🌟 OPTIMIZED WAPPER 🌟 */}
           <div className="portfolio-image-wrapper">
-            {/* Yahan apni ek best photo ka naam daal lijiye public folder se */}
-            <img 
+            <Image 
               src="/dulhan.jpg" 
-              alt="Pankaj Studio Portfolio" 
+              alt="Pankaj Studio Portfolio"
+              fill
+              sizes="(max-width: 900px) 100vw, 50vw"
               className="portfolio-img"
+              quality={85}
+              loading="lazy"
             />
           </div>
 
@@ -76,13 +80,17 @@ export default function MilestonesHub({ projects }) {
           border-radius: 4px;
           box-shadow: 0 20px 40px rgba(0,0,0,0.5);
           position: relative;
+          
+          /* 🌟 GPU Acceleration (Hardware Render) - Lag Killer 🌟 */
+          transform: translateZ(0);
+          backface-visibility: hidden;
+          perspective: 1000px;
         }
 
         .portfolio-img {
-          width: 100%;
-          height: 100%;
           object-fit: cover;
           transition: transform 0.8s ease;
+          will-change: transform; /* Browser ko pehle se alert karta hai animation ke liye */
         }
 
         .portfolio-image-wrapper:hover .portfolio-img {
@@ -110,7 +118,7 @@ export default function MilestonesHub({ projects }) {
 
         @media(max-width: 900px) {
           .portfolio-showcase {
-            flex-direction: column-reverse; /* Image on top, text below on mobile */
+            flex-direction: column-reverse;
             padding: 20px;
             gap: 30px;
           }
