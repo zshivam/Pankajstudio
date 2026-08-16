@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers'; // 🌟 Added for Logout
+import { cookies } from 'next/headers'; 
 import Link from 'next/link';
 import connectDB from '@/lib/mongodb';
 import MediaProject from '@/models/MediaProject';
@@ -11,8 +11,8 @@ export const metadata = { title: 'Dashboard — Admin' };
 // 🌟 SECURE LOGOUT SERVER ACTION 🌟
 async function logoutAdmin() {
   'use server';
-  cookies().delete('admin_token'); // Cookie delete karega
-  redirect('/admin/login'); // Wapas login par bhej dega
+  cookies().delete('admin_token'); 
+  redirect('/admin/login'); 
 }
 
 async function getStats() {
@@ -57,7 +57,7 @@ const CATEGORY_COLORS = {
 };
 
 export default async function AdminDashboard() {
-  // 🌟 PAGE LEVEL SECURITY: Fake token yahan pakda jayega
+  // 🌟 PAGE LEVEL SECURITY
   const session = await getAdminSession();
   if (!session) redirect('/admin/login');
 
@@ -80,16 +80,17 @@ export default async function AdminDashboard() {
           
           {/* 🌟 LOGOUT BUTTON 🌟 */}
           <form action={logoutAdmin}>
-            <button type="submit" style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              padding: '10px 20px', background: 'transparent', color: '#fff',
-              border: '1px solid rgba(255,255,255,0.2)', cursor: 'pointer',
-              fontFamily: '"DM Sans", sans-serif', fontSize: 11, fontWeight: 600,
-              letterSpacing: '0.1em', textTransform: 'uppercase', borderRadius: 4,
-              transition: 'all 0.3s'
-            }}
-            onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.borderColor = '#fff'; }}
-            onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; }}
+            <button 
+              type="submit" 
+              className="logout-btn"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                padding: '10px 20px', background: 'transparent', color: '#fff',
+                border: '1px solid rgba(255,255,255,0.2)', cursor: 'pointer',
+                fontFamily: '"DM Sans", sans-serif', fontSize: 11, fontWeight: 600,
+                letterSpacing: '0.1em', textTransform: 'uppercase', borderRadius: 4,
+                transition: 'all 0.3s'
+              }}
             >
               Logout
             </button>
@@ -171,6 +172,14 @@ export default async function AdminDashboard() {
           </div>
         </div>
       </div>
+      
+      {/* 🌟 CSS HOVER STATE ADDED HERE */}
+      <style>{`
+        .logout-btn:hover {
+          background: rgba(255,255,255,0.05) !important;
+          border-color: #fff !important;
+        }
+      `}</style>
     </div>
   );
 }

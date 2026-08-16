@@ -42,6 +42,7 @@ export default function AdminLoginPage() {
       background: '#0f0f0f', fontFamily: '"DM Sans", system-ui, sans-serif',
     }}>
       <div style={{ width: '100%', maxWidth: 400, padding: '0 24px' }}>
+        
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 48 }}>
           <h1 style={{ fontFamily: '"Cormorant Garamond", Georgia, serif', fontSize: 32, fontWeight: 400, fontStyle: 'italic', color: '#fff', letterSpacing: '0.01em', marginBottom: 8 }}>
@@ -86,14 +87,22 @@ export default function AdminLoginPage() {
               </p>
             )}
 
+            {/* Completely removed JS mouse events, using a CSS class instead */}
             <button
               type="submit"
               disabled={loading}
+              className="login-btn"
               style={{
-                padding: '14px', background: loading ? '#333' : '#ffffff',
-                color: '#0f0f0f', fontFamily: '"DM Sans", sans-serif',
-                fontSize: 12, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
-                border: 'none', cursor: loading ? 'wait' : 'pointer',
+                padding: '14px', 
+                background: loading ? '#333' : '#ffffff',
+                color: '#0f0f0f', 
+                fontFamily: '"DM Sans", sans-serif',
+                fontSize: 12, 
+                fontWeight: 600, 
+                letterSpacing: '0.12em', 
+                textTransform: 'uppercase',
+                border: 'none', 
+                cursor: loading ? 'wait' : 'pointer',
                 transition: 'all 0.2s',
               }}
             >
@@ -103,9 +112,14 @@ export default function AdminLoginPage() {
         </div>
       </div>
 
+      {/* Added the hover effect directly into CSS */}
       <style>{`
         input::placeholder { color: rgba(255,255,255,0.2); }
         input:focus { outline: none; border-color: rgba(255,255,255,0.5) !important; }
+        
+        .login-btn:not(:disabled):hover {
+          background: #e0e0e0 !important;
+        }
       `}</style>
     </div>
   );

@@ -38,6 +38,7 @@ export async function POST(request) {
       .setExpirationTime('24h') // 24 ghante ke liye valid
       .sign(secret);
 
+    // Using await here as it is standard for Next.js 15+
     const cookieStore = await cookies();
     
     // 🌟 Set the secure cookie

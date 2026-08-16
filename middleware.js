@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
+import { jwtVerify } from 'jose'; // 🌟 Added jose for Edge runtime verification
 
-// Routes that require admin authentication
 const PROTECTED_ADMIN_PATHS = ['/admin/dashboard', '/admin/projects'];
 
-export function middleware(request) {
+export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
   // Check if this is a protected admin route
@@ -16,16 +16,29 @@ export function middleware(request) {
   // Check for admin session token in cookies
   const token = request.cookies.get('admin_token')?.value;
 
+  // No token — redirect to login
   if (!token) {
-    // No token — redirect to login
     const loginUrl = new URL('/admin/login', request.url);
     loginUrl.searchParams.set('from', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Token exists — let the request through
-  // The actual JWT verification happens in the API routes and page components
-  return NextResponse.next();
+  try {
+    // 🌟 THE UPGRADE: Actually verify the token isn't fake or expired
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+    await jwtVerify(token, secret);
+    
+    // Token is real — let the request through
+    return NextResponse.next();
+  } catch (error) {
+    // Token is fake or expired — delete it and redirect to login
+    const loginUrl = new URL('/admin/login', request.url);
+    loginUrl.searchParams.set('from', pathname);
+    
+    const response = NextResponse.redirect(loginUrl);
+    response.cookies.delete('admin_token'); // Clear the bad ticket
+    return response;
+  }
 }
 
 export const config = {
