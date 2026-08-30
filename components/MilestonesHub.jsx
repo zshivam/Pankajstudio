@@ -46,7 +46,6 @@ export default function MilestonesHub({ projects }) {
               fill
               sizes="(max-width: 900px) 100vw, 50vw"
               className="portfolio-img"
-              quality={85}
               loading="lazy"
             />
           </div>

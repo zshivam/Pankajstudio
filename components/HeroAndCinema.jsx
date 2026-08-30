@@ -169,7 +169,7 @@ function CinemaLounge({ projects = [] }) {
                    <iframe 
                      src={`https://www.youtube.com/embed/${videoId}?mute=1&rel=0&modestbranding=1`}
                      loading="lazy"
-                     fetchpriority="low"
+                     fetchPriority="low"
                      title={video.title || "Cinema Video"}
                      style={{ width: '100%', height: '100%', border: 'none', backgroundColor: '#000' }}
                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
