@@ -13,13 +13,19 @@ export const metadata = {
 };
 
 export default async function WorkPage() {
-  await connectDB();
+  let projects = [];
 
-  // Fetch published projects from MongoDB
-  const projects = await MediaProject.find({ isPublished: true })
-    .sort({ sortOrder: -1, createdAt: -1 })
-    .select('title slug category coverImage galleryImages storyHighlight location is4K eventDate')
-    .lean();
+  try {
+    await connectDB();
+    // Fetch published projects from MongoDB
+    const data = await MediaProject.find({ isPublished: true })
+      .sort({ sortOrder: -1, createdAt: -1 })
+      .select('title slug category coverImage galleryImages storyHighlight location is4K eventDate')
+      .lean();
+    projects = data || [];
+  } catch (err) {
+    console.error('WorkPage data fetch error:', err.message);
+  }
 
   return (
     <>
@@ -53,8 +59,8 @@ export default async function WorkPage() {
             </p>
           </header>
 
-          {/* Project Albums Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 32 }}>
+          {/* Project Albums Grid - 100% Mobile Responsive */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '24px' }}>
             {projects.map((p) => {
               const coverUrl = typeof p.coverImage === 'string' ? p.coverImage : p.coverImage?.url;
               const photoCount = p.galleryImages?.length || 0;

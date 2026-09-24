@@ -1,35 +1,53 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
-      // YouTube thumbnails for video embeds
       {
         protocol: 'https',
         hostname: 'img.youtube.com',
         pathname: '/**',
       },
-      // Vimeo thumbnails
       {
         protocol: 'https',
         hostname: 'i.vimeocdn.com',
         pathname: '/**',
       },
-      // 🌟 NAYA: Cloudinary (Cloud Storage) ki images allow karne ke liye
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
         pathname: '/**',
       },
     ],
-    // ❌ localPatterns (uploads folder) ko yahan se hata diya gaya hai kyunki Vercel par wo kaam nahi karta
+    qualities: [75, 80, 85, 90],
   },
   serverExternalPackages: ['mongoose', 'sharp'],
-  // Allow large image uploads
   experimental: {
     serverActions: {
       bodySizeLimit: '400mb',
     },
   },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        ],
+      },
+      {
+        source: '/(.*).(svg|jpg|jpeg|png|webp|avif|ico)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
+  },
 };
 
-export default nextConfig;
+export default nextConfig;

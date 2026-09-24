@@ -97,15 +97,17 @@ export default function MilestonesHub({ projects }) {
         }
 
         .portfolio-btn {
-          display: inline-block;
-          font-family: "Montserrat", sans-serif;
+          display: inline-flex;
+          align-items: center;
+          min-height: 44px;
+          font-family: var(--font-montserrat), "Montserrat", sans-serif;
           font-size: 12px;
           font-weight: 600;
           letter-spacing: 0.15em;
           text-transform: uppercase;
           color: #d4af37;
           text-decoration: none;
-          padding: 12px 0;
+          padding: 8px 0;
           border-bottom: 1px solid #d4af37;
           transition: all 0.3s;
         }

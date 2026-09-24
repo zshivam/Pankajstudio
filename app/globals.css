@@ -6,11 +6,14 @@
   --font-display: var(--font-display, Georgia, serif);
   --font-sans: var(--font-sans, system-ui, sans-serif);
   --font-mono: var(--font-mono, monospace);
+  --font-script: var(--font-script, cursive);
+  --font-montserrat: var(--font-montserrat, sans-serif);
+  --font-serif: var(--font-serif, serif);
   --color-parchment: #f8f7f5;
   --color-ink: #1a1714;
-  --color-ink-soft: #5c5348;
-  --color-ink-muted: #7a7268;
-  --color-ink-faint: #9a9087;
+  --color-ink-soft: #4e463d;
+  --color-ink-muted: #59524a;
+  --color-ink-faint: #6e6459;
   --color-border: #e4dfd9;
   --color-cinema: #060606;
   --color-gold: #c9a84c;

@@ -62,14 +62,18 @@ export default function Navbar() {
           <img 
             src={LOGO_PATH} 
             alt="Pankaj Studio Logo" 
+            width={42}
+            height={42}
             style={{ height: scrolled ? 36 : 42, width: 'auto', display: 'block', transition: 'height 0.4s ease' }} 
             className="navbar-logo"
+            loading="eager"
+            decoding="async"
           />
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-             <span className="brand-sub" style={{ fontFamily: '"Montserrat", sans-serif', fontSize: 15, fontWeight: 500, color: '#d4af37', textTransform: 'uppercase', letterSpacing: '0.4em', marginTop: 2, transition: 'color 0.3s ease' }}>
+             <span className="brand-sub" style={{ fontFamily: 'var(--font-montserrat), sans-serif', fontSize: 15, fontWeight: 500, color: '#d4af37', textTransform: 'uppercase', letterSpacing: '0.4em', marginTop: 2, transition: 'color 0.3s ease' }}>
               Pankaj
-               <span className="brand-sub" style={{ fontFamily: '"Montserrat", sans-serif', fontSize: 15, fontWeight: 500, color: '#fcfcfc', textTransform: 'uppercase', letterSpacing: '0.4em', marginTop: 2, transition: 'color 0.3s ease' }}>
-               Studio
+               <span className="brand-sub" style={{ fontFamily: 'var(--font-montserrat), sans-serif', fontSize: 15, fontWeight: 500, color: '#fcfcfc', textTransform: 'uppercase', letterSpacing: '0.4em', marginTop: 2, transition: 'color 0.3s ease' }}>
+                Studio
             </span>
             </span>
           </div>
@@ -114,8 +118,14 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        {/* MOBILE MENU TOGGLE */}
-        <button onClick={() => setMenuOpen(!menuOpen)} className="mobile-menu-btn" aria-label="Toggle menu" style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 8, display: 'none' }}>
+        {/* MOBILE MENU TOGGLE WITH ACCESSIBLE 44px+ TOUCH TARGET */}
+        <button 
+          onClick={() => setMenuOpen(!menuOpen)} 
+          className="mobile-menu-btn" 
+          aria-label="Toggle navigation menu"
+          aria-expanded={menuOpen}
+          style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '10px', minWidth: '44px', minHeight: '44px', display: 'none', alignItems: 'center', justifyContent: 'center' }}
+        >
           <div style={{ width: 24, display: 'flex', flexDirection: 'column', gap: 5 }}>
             {[0, 1, 2].map((i) => {
               let transformValue = 'none';
@@ -139,19 +149,23 @@ export default function Navbar() {
       </header>
       
       {/* 🌟 MOBILE MENU OVERLAY 🌟 */}
-      <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: '#050505', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 var(--page-gutter)', transform: menuOpen ? 'translateX(0)' : 'translateX(100%)', transition: 'transform 0.5s cubic-bezier(0.77,0,0.175,1)' }}>
+      <div style={{ position: 'fixed', inset: 0, zIndex: 40, background: '#050505', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 var(--page-gutter)', transform: menuOpen ? 'translateX(0)' : 'translateX(100%)', visibility: menuOpen ? 'visible' : 'hidden', pointerEvents: menuOpen ? 'auto' : 'none', transition: 'transform 0.5s cubic-bezier(0.77,0,0.175,1), visibility 0.5s' }}>
         
         <Link href="/" onClick={() => setMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 14, textDecoration: 'none', marginBottom: 40 }}>
           <img 
             src={LOGO_PATH}
             alt="Pankaj Studio Logo" 
+            width={48}
+            height={48}
             style={{ height: 48, width: 'auto', display: 'block' }} 
+            loading="lazy"
+            decoding="async"
           />
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <span style={{ fontFamily: '"Great Vibes", cursive', fontSize: 36, color: '#ffffff', lineHeight: 1, letterSpacing: '1px' }}>
+            <span style={{ fontFamily: 'var(--font-script), "Great Vibes", cursive', fontSize: 36, color: '#ffffff', lineHeight: 1, letterSpacing: '1px' }}>
               Pankaj
             </span>
-            <span style={{ fontFamily: '"Montserrat", sans-serif', fontSize: 10, fontWeight: 400, color: '#d4af37', textTransform: 'uppercase', letterSpacing: '0.4em', marginTop: 4 }}>
+            <span style={{ fontFamily: 'var(--font-montserrat), sans-serif', fontSize: 10, fontWeight: 400, color: '#d4af37', textTransform: 'uppercase', letterSpacing: '0.4em', marginTop: 4 }}>
               Studio
             </span>
           </div>
@@ -159,17 +173,15 @@ export default function Navbar() {
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
           {MOBILE_LINKS.map((l) => (
-            <Link key={l.href} href={l.href} onClick={() => setMenuOpen(false)} className="mobile-nav-link" style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px, 5.5vw, 36px)', fontWeight: 300, fontStyle: 'italic', color: 'rgba(255,255,255,0.75)', textDecoration: 'none', transition: 'all 0.3s ease' }}>
+            <Link key={l.href} href={l.href} onClick={() => setMenuOpen(false)} className="mobile-nav-link" style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px, 5.5vw, 36px)', fontWeight: 300, fontStyle: 'italic', color: 'rgba(255,255,255,0.75)', textDecoration: 'none', transition: 'all 0.3s ease', minHeight: '44px', display: 'flex', alignItems: 'center' }}>
               {l.label}
             </Link>
           ))}
         </nav>
       </div>
 
-      {/* 🌟 STYLES 🌟 */}
+      {/* 🌟 STYLES (Font @import eliminated for performance) 🌟 */}
       <style dangerouslySetInnerHTML={{ __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;500;700&display=swap');
-
         @media(max-width:900px){
           .desktop-nav{display:none!important}
           .mobile-menu-btn{display:flex!important}

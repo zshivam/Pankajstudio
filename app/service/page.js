@@ -233,7 +233,9 @@ export default function ServicePage() {
         }
 
         .episode-btn {
-          display: inline-block;
+          display: inline-flex;
+          align-items: center;
+          min-height: 44px;
           font-family: "Montserrat", sans-serif;
           font-size: 11px;
           font-weight: 600;

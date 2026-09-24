@@ -47,7 +47,7 @@ export default function AboutStrip() {
             ].map((s) => (
               <div key={s.num} style={{ display: 'grid', gridTemplateColumns: '110px 1fr', alignItems: 'center', gap: 16 }}>
                 <span style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(28px, 3vw, 40px)', fontWeight: 300, color: '#d4af37', letterSpacing: '-0.02em', lineHeight: 1 }}>{s.num}</span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', lineHeight: 1.5 }}>{s.label}</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.75)', textTransform: 'uppercase', lineHeight: 1.5 }}>{s.label}</span>
               </div>
             ))}
           </div>

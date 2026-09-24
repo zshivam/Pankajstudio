@@ -21,12 +21,11 @@ function toEmbedUrl(url) {
 }
 
 export default async function GalleryPage() {
-  await connectDB();
-
   let projects = [];
   let galleryItems = [];
 
   try {
+    await connectDB();
     // 1. Fetch Work / Albums Projects
     const projRes = await MediaProject.find({ isPublished: true })
       .select('title slug category coverImage galleryImages videoEmbedUrl is4K')

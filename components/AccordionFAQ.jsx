@@ -30,21 +30,21 @@ function AccordionItem({ item, index, isOpen, onToggle, itemId }) {
         onClick={onToggle}
         style={{ display: 'grid', gridTemplateColumns: '32px 1fr 24px', alignItems: 'start', gap: 16, width: '100%', textAlign: 'left', padding: '20px 0', background: 'transparent', border: 'none', cursor: 'pointer' }}
       >
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em', color: '#b8b0a8', paddingTop: 3 }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em', color: '#59524a', paddingTop: 3, fontWeight: 500 }}>
           {String(index + 1).padStart(2, '0')}
         </span>
         <span style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(16px, 1.8vw, 20px)', fontWeight: 500, fontStyle: isOpen ? 'italic' : 'normal', color: '#1a1714', lineHeight: 1.3, letterSpacing: '-0.01em', transition: 'font-style 0.2s' }}>
           {item.q}
         </span>
         <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 3, transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)', transition: 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)' }}>
-          <svg viewBox="0 0 24 24" fill="none" stroke={isOpen ? '#1a1714' : '#9a9087'} strokeWidth="1.3" width="18" height="18">
+          <svg viewBox="0 0 24 24" fill="none" stroke={isOpen ? '#1a1714' : '#59524a'} strokeWidth="1.3" width="18" height="18">
             <path d="M12 5v14M5 12h14" strokeLinecap="round" />
           </svg>
         </span>
       </button>
       <div id={`${itemId}-body`} role="region" aria-labelledby={`${itemId}-btn`} style={{ overflow: 'hidden', maxHeight: height, transition: 'max-height 0.45s cubic-bezier(0.4,0,0.2,1)' }}>
         <div ref={bodyRef} style={{ paddingBottom: 22, paddingLeft: 48 }}>
-          <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 300, color: '#5c5348', lineHeight: 1.78, maxWidth: 520 }}>{item.a}</p>
+          <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 400, color: '#3d362e', lineHeight: 1.78, maxWidth: 520 }}>{item.a}</p>
         </div>
       </div>
     </div>
@@ -63,12 +63,12 @@ export default function AccordionFAQ({ items = DEFAULT_FAQS, title = 'Questions 
       <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: '0 72px', marginBottom: 60, alignItems: 'start' }} className="faq-header-grid">
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, paddingTop: 8 }}>
           <span style={{ display: 'block', width: 28, height: 1, background: '#c8c0b7' }} />
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.22em', color: '#9a9087', textTransform: 'uppercase' }}>FAQ</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.22em', color: '#4e463d', textTransform: 'uppercase', fontWeight: 600 }}>FAQ</span>
         </div>
         <div>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(26px, 3.5vw, 44px)', fontWeight: 300, fontStyle: 'italic', color: '#1a1714', lineHeight: 1.1, letterSpacing: '-0.02em', marginBottom: 12 }}>{title}</h2>
-          <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 300, color: '#7a7268', lineHeight: 1.6, marginBottom: 18, maxWidth: 400 }}>{subtitle}</p>
-          <a href="/contact" style={{ fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 500, letterSpacing: '0.08em', color: '#1a1714', textDecoration: 'none', borderBottom: '1px solid rgba(26,23,20,0.3)', paddingBottom: 2 }}>
+          <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 400, color: '#4e463d', lineHeight: 1.6, marginBottom: 18, maxWidth: 400 }}>{subtitle}</p>
+          <a href="/contact" style={{ fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', color: '#1a1714', textDecoration: 'none', borderBottom: '1px solid rgba(26,23,20,0.4)', paddingBottom: 2 }}>
             Still have questions? Let&apos;s talk →
           </a>
         </div>

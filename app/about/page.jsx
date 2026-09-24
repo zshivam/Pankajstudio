@@ -148,7 +148,7 @@ export default function AboutPage() {
           <p style={{ fontFamily: '"Montserrat", sans-serif', fontSize: 16, fontWeight: 300, color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, maxWidth: 450, margin: '0 auto 40px' }}>
             Let's discuss your next big event or custom printing needs. Our team is ready to bring your vision to life.
           </p>
-          <Link href="/contact" style={{ display: 'inline-flex', padding: '16px 48px', background: '#d4af37', fontFamily: '"Montserrat", sans-serif', fontSize: 13, fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', textDecoration: 'none', color: '#000', borderRadius: '4px', transition: 'all 0.3s' }} className="cta-btn">
+          <Link href="/contact" style={{ display: 'inline-flex', padding: 'clamp(14px, 4vw, 16px) clamp(24px, 6vw, 48px)', background: '#d4af37', fontFamily: '"Montserrat", sans-serif', fontSize: 13, fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', textDecoration: 'none', color: '#000', borderRadius: '4px', transition: 'all 0.3s' }} className="cta-btn">
             Contact Us Today
           </Link>
         </section>
@@ -167,7 +167,7 @@ export default function AboutPage() {
               Find Us in Deoria 📍
             </h2>
 
-            <div style={{ width: '100%', height: 480, borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 40px rgba(0,0,0,0.5)' }}>
+            <div style={{ width: '100%', height: 'clamp(280px, 45vh, 480px)', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 40px rgba(0,0,0,0.5)' }}>
               <iframe 
                 width="100%" 
                 height="100%" 
@@ -177,6 +177,7 @@ export default function AboutPage() {
                 allowFullScreen 
                 loading="lazy" 
                 referrerPolicy="no-referrer-when-downgrade"
+                title="Pankaj Studio Location Map"
               ></iframe>
             </div>
 
@@ -187,8 +188,6 @@ export default function AboutPage() {
       
       {/* 🌟 PREMIUM TYPOGRAPHY & LAYOUT STYLES 🌟 */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
-
         .editorial-row {
           display: flex;
           align-items: center;

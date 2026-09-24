@@ -4,25 +4,34 @@ import { optimizeImageUrl } from '@/lib/utils';
 
 export default function WelcomeHero({ images = [] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (images.length <= 1) return;
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted || images.length <= 1) return;
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
     }, 4000);
     return () => clearInterval(timer);
-  }, [images]);
+  }, [mounted, images]);
+
+  // Only show the first image during SSR/initial page load for lightning-fast LCP
+  const displayImages = mounted ? images : images.slice(0, 1);
 
   return (
-    // 🌟 flex-col items-center on all screen sizes, pt-20 ensures mobile navbar doesn't hide the image.
     <div className="relative w-full h-[100svh] bg-neutral-950 flex flex-col items-center justify-center overflow-hidden pt-20 md:pt-0">
       
       {/* 🖼️ IMAGE CONTAINER (Mobile: Top Half Uncropped | Desktop: Full Screen Cover) */}
       <div className="relative w-full h-[45svh] md:h-full md:absolute md:inset-0 flex-shrink-0">
-        {images.length > 0 && images.map((img, index) => {
+        {displayImages.length > 0 && displayImages.map((img, index) => {
           const rawUrl = img.url || img.imageUrl || img;
-          const optimizedSrc = optimizeImageUrl(rawUrl, { width: 1920, quality: 'auto' });
           const isFirst = index === 0;
+          const src640 = optimizeImageUrl(rawUrl, { width: 640 });
+          const src1080 = optimizeImageUrl(rawUrl, { width: 1080 });
+          const src1920 = optimizeImageUrl(rawUrl, { width: 1920 });
 
           return (
             <div 
@@ -30,34 +39,38 @@ export default function WelcomeHero({ images = [] }) {
               className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"}`}
             >
               <img 
-                src={optimizedSrc} 
-                alt="Pankaj Studio Carousel" 
+                src={src1080}
+                srcSet={`${src640} 640w, ${src1080} 1080w, ${src1920} 1920w`}
+                sizes="100vw"
+                alt="Pankaj Studio Showcase" 
+                width={1920}
+                height={1080}
                 loading={isFirst ? "eager" : "lazy"}
                 fetchPriority={isFirst ? "high" : "low"}
                 decoding={isFirst ? "sync" : "async"}
-                // 🌟 object-contain on mobile (no cropping), object-cover on desktop (full screen)
-                // 🌟 opacity is brighter on mobile since text is below it, darker on desktop for text readability
                 className="w-full h-full object-contain md:object-cover md:object-center opacity-90 md:opacity-40" 
               />
             </div>
           );
         })}
-        {/* Desktop Gradient Overlay (Hidden on mobile) */}
+        {/* Desktop Gradient Overlay */}
         <div className="hidden md:block absolute inset-0 bg-black/20 z-10 pointer-events-none"></div>
       </div>
 
-      {/* 📝 TEXT & LOGO CONTAINER (Mobile: Bottom Half | Desktop: Centered over image) */}
-      <div className="relative z-20 flex flex-col items-center justify-center flex-1 px-6 md:px-4 pb-20 md:pb-0 text-center bg-neutral-950 md:bg-transparent w-full">
+      {/* 📝 TEXT & LOGO CONTAINER */}
+      <div className="relative z-20 flex flex-col items-center justify-center flex-1 px-4 sm:px-6 md:px-4 pb-16 md:pb-0 text-center bg-neutral-950 md:bg-transparent w-full">
         
         {/* LOGO */}
-        <div className="mb-4 relative w-32 h-32 md:w-48 md:h-48 drop-shadow-2xl">
+        <div className="mb-3 sm:mb-4 relative w-24 h-24 sm:w-32 sm:h-32 md:w-48 md:h-48 drop-shadow-2xl">
           <img 
             src="/pstudiologo.png" 
             alt="Pankaj Studio Logo" 
             width={192}
             height={192}
             className="w-full h-full object-contain"
+            loading="eager"
             fetchPriority="high"
+            decoding="async"
           />
         </div>
 
@@ -66,7 +79,7 @@ export default function WelcomeHero({ images = [] }) {
         </p>
       </div>
 
-      {/* 👇 SCROLL INDICATOR - 100% Mathematically Centered at the Bottom */}
+      {/* 👇 SCROLL INDICATOR */}
       <div 
         style={{
           position: 'absolute',
@@ -111,4 +124,3 @@ export default function WelcomeHero({ images = [] }) {
     </div>
   );
 }
-

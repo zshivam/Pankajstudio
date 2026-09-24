@@ -221,6 +221,19 @@ export default function GalleryLightbox({ images = [], title = '' }) {
           display: flex; align-items: center; justify-content: center; transition: opacity 0.3s ease;
         }
         .gallery-item-wrap:hover .gallery-item-hover { opacity: 1; }
+
+        @media(max-width: 900px) {
+          .gallery-grid {
+            columns: 2 !important;
+            column-gap: 10px !important;
+          }
+        }
+        @media(max-width: 480px) {
+          .gallery-grid {
+            columns: 1 !important;
+            column-gap: 0 !important;
+          }
+        }
       ` }} />
     </>
   );

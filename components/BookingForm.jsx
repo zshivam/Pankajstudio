@@ -139,7 +139,7 @@ export default function BookingForm() {
         {errors.message && <p style={eStyle}>{errors.message.message}</p>}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 20, paddingTop: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 20, paddingTop: 8 }}>
         <button type="submit" disabled={status === 'loading'} className="submit-btn" style={{ 
           padding: '16px 40px', 
           background: '#d4af37', 
@@ -162,7 +162,8 @@ export default function BookingForm() {
 
       <style>{`
         @media(max-width: 600px) {
-          .form-row { grid-template-columns: 1fr !important; }
+          .form-row { grid-template-columns: 1fr !important; gap: 20px !important; }
+          .submit-btn { width: 100% !important; text-align: center; }
         }
 
         .dark-input::placeholder {

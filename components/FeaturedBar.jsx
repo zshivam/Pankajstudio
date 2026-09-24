@@ -11,7 +11,7 @@ export default function FeaturedBar() {
     }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 var(--page-gutter)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '40px' }}>
         
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', margin: 0 }}>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.75)', margin: 0 }}>
           Recognized & Rated For Excellence:
         </p>
 

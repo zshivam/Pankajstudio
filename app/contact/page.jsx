@@ -125,8 +125,6 @@ export default function ContactPage() {
 
       {/* 🌟 PREMIUM STYLES 🌟 */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
-
         /* Agar BookingForm ke input fields white hain, toh unhe CSS override se dark banayein */
         .form-wrapper-dark form input,
         .form-wrapper-dark form textarea,

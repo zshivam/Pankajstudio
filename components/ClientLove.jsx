@@ -34,15 +34,33 @@ export default function ClientLove() {
           </span>
         </div>
 
-        {/* Dots */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginTop: 30 }}>
+        {/* Dots with Accessible Touch Targets (min 44x44px) */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 4, marginTop: 24 }}>
           {REVIEWS.map((_, i) => (
             <button 
               key={i} 
               onClick={() => setCurrent(i)}
-              style={{ width: 8, height: 8, borderRadius: '50%', border: 'none', background: current === i ? '#d4af37' : 'rgba(255,255,255,0.2)', cursor: 'pointer', padding: 0, transition: 'background 0.3s' }}
+              style={{ 
+                minWidth: '44px', 
+                minHeight: '44px', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                background: 'transparent', 
+                border: 'none', 
+                cursor: 'pointer', 
+                padding: 0 
+              }}
               aria-label={`Go to review ${i + 1}`}
-            />
+            >
+              <span style={{ 
+                width: 10, 
+                height: 10, 
+                borderRadius: '50%', 
+                background: current === i ? '#d4af37' : 'rgba(255,255,255,0.3)', 
+                transition: 'all 0.3s ease' 
+              }} />
+            </button>
           ))}
         </div>
 

@@ -22,7 +22,7 @@ export default function Footer() {
           </div>
           
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '32px', fontWeight: 400, color: '#fff', marginBottom: 10 }}>Pankaj Studio</h2>
-          <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 24, fontStyle: 'italic' }}>
+          <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'rgba(255,255,255,0.75)', marginBottom: 24, fontStyle: 'italic' }}>
             Capturing life, preserving legacy.
           </p>
 
@@ -132,19 +132,19 @@ export default function Footer() {
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', padding: '24px var(--page-gutter)' }} className="footer-bottom-bar">
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
           
-          <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>
+          <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'rgba(255,255,255,0.75)' }}>
             © {year} Pankaj Studio. All rights reserved.
           </p>
 
-          <div style={{ display: 'flex', gap: 16, alignItems: 'center', fontFamily: 'var(--font-sans)', fontSize: 13 }}>
+          <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap', fontFamily: 'var(--font-sans)', fontSize: 13 }}>
             <Link href="/" className="bottom-link">Home</Link>
-            <span style={{ color: 'rgba(255,255,255,0.2)' }}>|</span>
+            <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
             <Link href="#" className="bottom-link">Privacy Policy</Link>
-            <span style={{ color: 'rgba(255,255,255,0.2)' }}>|</span>
+            <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
             <Link href="/contact" className="bottom-link">Contact Us</Link>
             
             {/* 🌟 HIDDEN ADMIN LINK 🌟 */}
-            <span style={{ color: 'rgba(255,255,255,0.2)' }}>|</span>
+            <span style={{ color: 'rgba(255,255,255,0.4)' }}>|</span>
             <Link href="/admin/login" className="admin-hidden-link">
               🔒 Admin
             </Link>
@@ -188,7 +188,7 @@ export default function Footer() {
         }
         
         .bottom-link {
-          color: rgba(255,255,255,0.6);
+          color: rgba(255,255,255,0.75);
           text-decoration: none;
           transition: color 0.3s ease;
         }
@@ -197,7 +197,7 @@ export default function Footer() {
         }
 
         .admin-hidden-link {
-          color: rgba(255,255,255,0.15); 
+          color: rgba(255,255,255,0.6); 
           text-decoration: none;
           transition: color 0.3s ease;
         }
@@ -213,8 +213,10 @@ export default function Footer() {
           position: absolute;
           right: var(--page-gutter);
           bottom: 20px;
-          width: 40px;
-          height: 40px;
+          width: 44px;
+          height: 44px;
+          min-width: 44px;
+          min-height: 44px;
           background-color: #d4af37;
           color: #000;
           border: none;
@@ -233,13 +235,15 @@ export default function Footer() {
           box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
 
-        /* 🌟 Social Icons CSS 🌟 */
+        /* 🌟 Social Icons CSS (44px touch targets) 🌟 */
         .social-btn {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 36px;
-          height: 36px;
+          width: 44px;
+          height: 44px;
+          min-width: 44px;
+          min-height: 44px;
           border-radius: 50%;
           transition: all 0.3s ease;
         }

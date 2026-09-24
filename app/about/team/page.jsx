@@ -391,11 +391,18 @@ export default function TeamPage() {
           }
 
           .achievement-grid {
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
           }
           
           .wide-img-wrapper {
             width: 100%;
+          }
+        }
+
+        @media(max-width: 480px) {
+          .achievement-grid {
+            grid-template-columns: 1fr;
           }
         }
       `}} />

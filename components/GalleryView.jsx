@@ -72,7 +72,7 @@ export default function GalleryView({ images = [], videos = [] }) {
       {activeTab === 'videos' && (
         <div>
           {videos.length > 0 ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 28 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: 28 }}>
               {videos.map((v) => (
                 <div key={v.id} style={{ background: '#111', borderRadius: 8, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
                   {/* YouTube Player */}
