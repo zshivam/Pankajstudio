@@ -1,4 +1,5 @@
 import { Cormorant_Garamond, DM_Sans, DM_Mono } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
 const cormorant = Cormorant_Garamond({ subsets: ['latin'], weight: ['300','400','500','600'], style: ['normal','italic'], variable: '--font-display', display: 'swap' });
@@ -59,6 +60,7 @@ export default function RootLayout({ children }) {
         >
           Book Now
         </a>
+        <Analytics />
       </body>
     </html>
   );
